@@ -1,1686 +1,1495 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mood Journal</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MoodFlow">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4a7c59">
+<title>MoodFlow</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root {
-    --bg: #f5f0e8;
-    --bg2: #ede7d9;
-    --card: #faf7f2;
-    --border: #d9cfc0;
-    --text: #2c2418;
-    --text2: #6b5f4e;
-    --text3: #9c8c78;
-    --accent: #8b6914;
-    --accent2: #c4944a;
-    --teal: #3d7a6f;
-    --teal-light: #e8f4f2;
-    --rose: #a85050;
-    --rose-light: #f5eaea;
-    --indigo: #4a5a8a;
-    --indigo-light: #eaecf5;
-    --green: #4a7a4a;
-    --green-light: #eaf2ea;
-    --amber: #8b6914;
-    --amber-light: #f5eedc;
-    --shadow: 0 2px 12px rgba(44,36,24,0.08);
-    --shadow-lg: 0 8px 32px rgba(44,36,24,0.12);
-    --radius: 14px;
-    --radius-sm: 8px;
-  }
+*,*::before,*::after{box-sizing:border-box!important;margin:0!important;padding:0!important;}
+:root{
+  /* New warm green-brown-amber palette */
+  --pri:#4a7c59;--pri-dark:#356047;--pri-bg:#f0f7f2;--pri-light:#dceee3;
+  --border:#b8d4c0;--border2:#9fc4ab;
+  --text:#1a2e1e;--text2:#3a5c42;--text3:#7a9c82;
+  --green:#22c55e;--green-dark:#16a34a;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#b45309;--amber-bg:#fffbeb;--amber-border:#fcd34d;--amber-light:#fef3c7;
+  --teal:#0f766e;--teal-bg:#f0fdfa;--teal-border:#99f6e4;
+  --brown:#7c4a1e;--brown-bg:#fdf4ec;--brown-border:#f3d5b5;
+  --indigo:#5b5fc7;--indigo-bg:#eef2ff;--indigo-border:#c7d2fe;
+  --rose:#be185d;--rose-bg:#fdf2f8;--rose-border:#fbcfe8;
+}
+html,body{background:#f8f5f0!important;font-family:-apple-system,'Helvetica Neue',sans-serif!important;color:var(--text)!important;min-height:100vh!important;-webkit-font-smoothing:antialiased;}
+#app{max-width:430px!important;margin:0 auto!important;padding-bottom:140px!important;background:#f8f5f0!important;}
+button{-webkit-appearance:none!important;appearance:none!important;font-family:inherit!important;}
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
+/* NAV */
+.nav{display:flex!important;position:fixed!important;bottom:0!important;left:50%!important;transform:translateX(-50%)!important;width:100%!important;max-width:430px!important;background:#f8f5f0!important;border-top:2px solid var(--border)!important;padding:10px 8px 24px!important;z-index:100!important;gap:6px!important;}
+.nav-btn{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:4px!important;background:var(--pri-light)!important;border:2px solid var(--border2)!important;border-radius:12px!important;cursor:pointer!important;color:var(--pri)!important;font-size:10px!important;font-weight:700!important;letter-spacing:.04em!important;padding:8px 4px 6px!important;}
+.nav-btn.active{background:var(--pri)!important;border-color:var(--pri-dark)!important;color:#fff!important;}
+.nav-icon{font-size:18px!important;line-height:1!important;}
 
-body {
-font-family: ‘DM Sans’, sans-serif;
-background: var(–bg);
-color: var(–text);
-min-height: 100vh;
-font-size: 14px;
-}
+/* HEADER */
+.header{padding:12px 20px 0!important;}
+.header-inner{background:var(--pri)!important;border-radius:14px!important;padding:14px 16px!important;}
+.period-tabs{display:flex!important;gap:5px!important;margin-bottom:12px!important;}
+.period-tab{flex:1!important;padding:6px 4px!important;border-radius:8px!important;font-size:11px!important;font-weight:700!important;border:1.5px solid rgba(255,255,255,.3)!important;background:rgba(255,255,255,.15)!important;color:rgba(255,255,255,.8)!important;cursor:pointer!important;text-align:center!important;}
+.period-tab.active{background:#fff!important;border-color:#fff!important;color:var(--pri)!important;}
+.period-nav{display:flex!important;align-items:center!important;justify-content:space-between!important;}
+.period-btn{background:rgba(255,255,255,.2)!important;border:1.5px solid rgba(255,255,255,.4)!important;border-radius:50%!important;width:30px!important;height:30px!important;cursor:pointer!important;color:#fff!important;font-size:16px!important;font-weight:700!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;}
+.period-btn.disabled{opacity:.3!important;cursor:default!important;pointer-events:none!important;}
+.period-btn:active{background:rgba(255,255,255,.4)!important;}
+.period-label-wrap{flex:1!important;text-align:center!important;}
+.period-main{font-size:15px!important;font-weight:800!important;color:#fff!important;line-height:1.2!important;}
+.period-sub{font-size:11px!important;color:rgba(255,255,255,.8)!important;font-weight:600!important;margin-top:2px!important;background:rgba(255,255,255,.2)!important;border-radius:6px!important;display:inline-block!important;padding:1px 8px!important;}
 
-/* ─── HEADER ─── */
-.header {
-background: var(–card);
-border-bottom: 1px solid var(–border);
-padding: 0 24px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-position: sticky;
-top: 0;
-z-index: 100;
-gap: 16px;
-flex-wrap: wrap;
-min-height: 64px;
-}
-.header-left { display: flex; align-items: center; gap: 20px; }
-.logo {
-font-family: ‘Lora’, serif;
-font-size: 20px;
-font-weight: 600;
-color: var(–accent);
-letter-spacing: -0.3px;
-white-space: nowrap;
-}
-.logo span { color: var(–text3); font-weight: 400; font-style: italic; font-size: 14px; margin-left: 6px; }
+/* SAVE BTN */
+.add-btn{position:fixed!important;bottom:90px!important;left:50%!important;transform:translateX(-50%)!important;width:calc(100% - 16px)!important;max-width:414px!important;background:var(--pri-light)!important;border:2px solid var(--border2)!important;border-radius:12px!important;color:var(--pri)!important;font-size:14px!important;font-weight:700!important;cursor:pointer!important;display:flex;align-items:center!important;justify-content:center!important;gap:8px!important;padding:12px 0!important;z-index:101!important;}
+.add-btn:active{background:var(--pri)!important;color:#fff!important;}
 
-/* ─── TABS ─── */
-.tabs {
-display: flex;
-gap: 2px;
-background: var(–bg2);
-border-radius: 10px;
-padding: 3px;
-}
-.tab {
-padding: 7px 18px;
-border-radius: 8px;
-border: none;
-background: transparent;
-color: var(–text2);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s;
-white-space: nowrap;
-}
-.tab.active {
-background: var(–card);
-color: var(–text);
-box-shadow: 0 1px 4px rgba(44,36,24,0.12);
-}
-.tab:hover:not(.active) { background: rgba(255,255,255,0.5); }
+/* CARDS */
+.card{background:#fff!important;border:2px solid var(--border)!important;border-radius:14px!important;padding:14px 16px!important;}
+.card.accent{background:var(--pri)!important;border-color:var(--pri-dark)!important;}
+.card.accent .card-label{color:rgba(255,255,255,.75)!important;}
+.card.accent .card-value{color:#fff!important;}
+.card.accent .card-sub{color:rgba(255,255,255,.7)!important;}
+.card-label{font-size:11px!important;color:var(--text3)!important;letter-spacing:.06em!important;text-transform:uppercase!important;margin-bottom:4px!important;font-weight:600!important;}
+.card-value{font-size:20px!important;font-weight:800!important;color:var(--text)!important;}
+.card-sub{font-size:11px!important;color:var(--text2)!important;margin-top:2px!important;}
+.summary{padding:14px 20px 0!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;}
+.card.small-warm{background:var(--pri-bg)!important;border-color:var(--border)!important;}
+.card.small-warm .card-value{color:var(--pri)!important;font-size:18px!important;}
+.card.amber-card{background:var(--amber-bg)!important;border-color:var(--amber-border)!important;}
+.card.amber-card .card-value{color:var(--amber)!important;font-size:18px!important;}
+.card.amber-card .card-label{color:var(--amber)!important;}
 
-/* color coding per tab */
-.tab[data-tab=“general”].active { color: var(–amber); }
-.tab[data-tab=“cptsd”].active { color: var(–teal); }
-.tab[data-tab=“adhd”].active { color: var(–indigo); }
+/* BLOCK */
+.block{background:#fff!important;border:2px solid var(--border)!important;border-radius:14px!important;padding:4px 14px!important;margin:0 20px 14px!important;}
+.sec-pad{padding:14px 20px 8px!important;}
+.section-title{font-size:12px!important;font-weight:800!important;color:var(--text2)!important;letter-spacing:.07em!important;text-transform:uppercase!important;margin-bottom:10px!important;}
+.page{display:none!important;}
+.page.active{display:block!important;}
+.empty-state{text-align:center!important;padding:28px 20px!important;color:var(--text3)!important;font-size:14px!important;}
 
-/* ─── HEADER RIGHT ─── */
-.header-right { display: flex; align-items: center; gap: 10px; }
-.date-nav { display: flex; align-items: center; gap: 8px; }
-.date-nav input[type=“date”] {
-border: 1px solid var(–border);
-background: var(–bg);
-padding: 6px 10px;
-border-radius: 8px;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-color: var(–text);
-cursor: pointer;
-}
-.btn {
-padding: 7px 16px;
-border-radius: 8px;
-border: none;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.18s;
-}
-.btn-primary {
-background: var(–accent);
-color: #fff;
-}
-.btn-primary:hover { background: #7a5c10; }
-.btn-secondary {
-background: var(–bg2);
-color: var(–text2);
-border: 1px solid var(–border);
-}
-.btn-secondary:hover { background: var(–border); }
-.btn-icon {
-width: 34px; height: 34px;
-padding: 0;
-display: flex; align-items: center; justify-content: center;
-font-size: 16px;
-background: var(–bg2);
-border: 1px solid var(–border);
-border-radius: 8px;
-color: var(–text2);
-}
-.btn-icon:hover { background: var(–border); }
+/* TRACK ITEMS */
+.track-item{display:flex!important;align-items:center!important;padding:11px 0!important;border-bottom:1.5px solid var(--border)!important;gap:12px!important;}
+.track-item:last-child{border-bottom:none!important;}
+.track-label{flex:1!important;font-size:14px!important;font-weight:600!important;color:var(--text)!important;}
+.track-label small{display:block!important;font-size:11px!important;color:var(--text3)!important;font-weight:400!important;margin-top:1px!important;}
 
-/* ─── MAIN ─── */
-.main { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
+/* iOS TOGGLE */
+.ios-toggle{position:relative!important;width:51px!important;height:31px!important;flex-shrink:0!important;}
+.ios-toggle input{opacity:0!important;width:0!important;height:0!important;position:absolute!important;}
+.ios-toggle-track{position:absolute!important;inset:0!important;background:#d1d5db!important;border-radius:31px!important;cursor:pointer!important;transition:background .2s!important;}
+.ios-toggle input:checked+.ios-toggle-track{background:var(--green)!important;}
+.ios-toggle-track::after{content:''!important;position:absolute!important;width:25px!important;height:25px!important;left:3px!important;top:3px!important;background:#fff!important;border-radius:50%!important;transition:transform .2s!important;box-shadow:0 1px 4px rgba(0,0,0,.2)!important;}
+.ios-toggle input:checked+.ios-toggle-track::after{transform:translateX(20px)!important;}
 
-/* ─── SECTION PANELS ─── */
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+/* SCALE PILLS */
+.scale-row{display:flex!important;gap:5px!important;}
+.scale-pill{flex:1!important;padding:7px 4px!important;border-radius:9px!important;border:2px solid var(--border)!important;background:var(--pri-bg)!important;font-size:12px!important;font-weight:700!important;color:var(--text3)!important;cursor:pointer!important;text-align:center!important;transition:all .15s!important;}
+.scale-pill:active{opacity:.7!important;}
+.scale-pill.sel-1{background:var(--green-bg)!important;border-color:var(--green)!important;color:var(--green-dark)!important;}
+.scale-pill.sel-2{background:var(--amber-light)!important;border-color:#fbbf24!important;color:#92400e!important;}
+.scale-pill.sel-3{background:#fff7ed!important;border-color:#f97316!important;color:#c2410c!important;}
+.scale-pill.sel-4{background:var(--red-bg)!important;border-color:var(--red)!important;color:#991b1b!important;}
 
-/* ─── SECTION GROUPS ─── */
-.section-group {
-margin-bottom: 20px;
-}
-.section-title {
-font-family: ‘Lora’, serif;
-font-size: 12px;
-font-weight: 500;
-letter-spacing: 0.08em;
-text-transform: uppercase;
-color: var(–text3);
-margin-bottom: 10px;
-padding-left: 2px;
-}
+/* MULTI-CHECK PILLS */
+.pills-wrap{display:flex!important;flex-wrap:wrap!important;gap:7px!important;}
+.pill{padding:6px 13px!important;border-radius:20px!important;font-size:12px!important;font-weight:600!important;border:2px solid var(--border)!important;background:var(--pri-light)!important;cursor:pointer!important;color:var(--pri)!important;white-space:nowrap!important;}
+.pill.sel{background:var(--pri)!important;border-color:var(--pri-dark)!important;color:#fff!important;}
 
-/* ─── GRID CARDS ─── */
-.cards-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-gap: 10px;
-}
-.cards-grid-sm {
-grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-}
-.cards-grid-lg {
-grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-}
+/* NUMBER ROW */
+.num-row{display:flex!important;align-items:center!important;gap:8px!important;}
+.num-inp{width:72px!important;border:2px solid var(--border)!important;background:var(--pri-bg)!important;border-radius:10px!important;padding:7px 10px!important;font-size:15px!important;font-weight:700!important;color:var(--text)!important;text-align:center!important;-moz-appearance:textfield!important;-webkit-appearance:none!important;}
+.num-inp::-webkit-inner-spin-button,.num-inp::-webkit-outer-spin-button{-webkit-appearance:none!important;}
+.num-inp:focus{outline:none!important;border-color:var(--pri)!important;}
+.num-adj{width:32px!important;height:32px!important;border-radius:50%!important;border:2px solid var(--border2)!important;background:var(--pri-light)!important;color:var(--pri)!important;font-size:18px!important;font-weight:700!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;flex-shrink:0!important;}
+.num-unit{font-size:12px!important;color:var(--text3)!important;font-weight:600!important;}
 
-/* ─── FIELD CARD ─── */
-.field-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 14px 16px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-transition: box-shadow 0.18s;
-}
-.field-card:hover { box-shadow: var(–shadow); }
-.field-card.accent-teal { border-left: 3px solid var(–teal); }
-.field-card.accent-rose { border-left: 3px solid var(–rose); }
-.field-card.accent-indigo { border-left: 3px solid var(–indigo); }
-.field-card.accent-amber { border-left: 3px solid var(–amber); }
-.field-card.accent-green { border-left: 3px solid var(–green); }
+/* MEDICATION */
+.med-item{display:flex!important;align-items:center!important;padding:10px 0!important;border-bottom:1.5px solid var(--border)!important;gap:12px!important;}
+.med-item:last-child{border-bottom:none!important;}
+.med-info{flex:1!important;}
+.med-name{font-size:14px!important;font-weight:600!important;color:var(--text)!important;}
+.med-dose{font-size:11px!important;color:var(--text3)!important;margin-top:1px!important;}
+.med-actions{display:flex!important;align-items:center!important;gap:8px!important;}
+.med-edit-btn{font-size:11px!important;font-weight:700!important;color:var(--pri)!important;background:var(--pri-bg)!important;border:1.5px solid var(--border)!important;border-radius:8px!important;padding:3px 9px!important;cursor:pointer!important;}
 
-.field-label {
-font-size: 12px;
-font-weight: 500;
-color: var(–text2);
-display: flex;
-align-items: center;
-gap: 6px;
-}
-.field-label .icon { font-size: 14px; }
-.field-label .tip {
-font-size: 10px;
-font-weight: 400;
-color: var(–text3);
-font-style: italic;
-margin-left: auto;
-}
+/* MODAL */
+.modal-overlay{position:fixed!important;inset:0!important;background:rgba(26,46,30,.4)!important;z-index:200!important;align-items:flex-end!important;justify-content:center!important;}
+.modal{background:#fff!important;border-radius:24px 24px 0 0!important;width:100%!important;max-width:430px!important;padding:20px 20px 40px!important;max-height:90vh!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;}
+.modal-handle{width:40px!important;height:4px!important;background:var(--border2)!important;border-radius:2px!important;margin:0 auto 16px!important;}
+.modal-title{font-size:17px!important;font-weight:800!important;color:var(--text)!important;margin-bottom:20px!important;text-align:center!important;}
+.form-row{margin-bottom:14px!important;}
+.form-label{font-size:11px!important;font-weight:800!important;color:var(--text2)!important;margin-bottom:6px!important;letter-spacing:.06em!important;text-transform:uppercase!important;display:block!important;}
+.form-input{width:100%!important;background:var(--pri-bg)!important;border:2px solid var(--border)!important;border-radius:8px!important;padding:11px 14px!important;font-size:15px!important;color:var(--text)!important;outline:none!important;-webkit-appearance:none!important;}
+.form-input:focus{border-color:var(--pri)!important;background:var(--pri-light)!important;}
+.submit-btn{width:100%!important;background:var(--pri)!important;color:#fff!important;border:2px solid var(--pri-dark)!important;border-radius:12px!important;padding:15px!important;font-size:16px!important;font-weight:800!important;cursor:pointer!important;margin-top:10px!important;}
+.cancel-modal-btn{width:100%!important;background:var(--pri-light)!important;color:var(--pri)!important;border:2px solid var(--border2)!important;border-radius:12px!important;padding:13px!important;font-size:15px!important;font-weight:700!important;cursor:pointer!important;margin-top:8px!important;}
+.del-btn-modal{width:100%!important;background:var(--red-bg)!important;color:var(--red)!important;border:2px solid #fca5a5!important;border-radius:12px!important;padding:13px!important;font-size:15px!important;font-weight:700!important;cursor:pointer!important;margin-top:8px!important;}
 
-/* ─── SCALE BUTTONS ─── */
-.scale-btns {
-display: flex;
-gap: 5px;
-}
-.scale-btn {
-flex: 1;
-padding: 7px 4px;
-border-radius: 7px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-size: 11px;
-font-weight: 500;
-color: var(–text3);
-cursor: pointer;
-transition: all 0.15s;
-text-align: center;
-line-height: 1.2;
-}
-.scale-btn:hover { border-color: var(–accent2); color: var(–accent); background: var(–amber-light); }
-.scale-btn.selected-1 { background: #e8f4f0; border-color: var(–teal); color: var(–teal); }
-.scale-btn.selected-2 { background: #e8f4e8; border-color: var(–green); color: var(–green); }
-.scale-btn.selected-3 { background: #fff4dc; border-color: var(–accent2); color: var(–accent); }
-.scale-btn.selected-4 { background: #fde8e8; border-color: var(–rose); color: var(–rose); }
+/* CONFIRM */
+.confirm-overlay{position:fixed!important;inset:0!important;background:rgba(26,46,30,.45)!important;z-index:300!important;align-items:center!important;justify-content:center!important;padding:20px!important;}
+.confirm-box{background:#fff!important;border-radius:18px!important;padding:28px 24px!important;width:100%!important;max-width:340px!important;text-align:center!important;}
+.confirm-title{font-size:17px!important;font-weight:800!important;color:var(--text)!important;margin-bottom:8px!important;}
+.confirm-msg{font-size:14px!important;color:var(--text3)!important;margin-bottom:24px!important;line-height:1.5!important;}
+.confirm-btns{display:flex!important;gap:10px!important;}
+.confirm-cancel{flex:1!important;padding:12px!important;background:var(--pri-light)!important;border:2px solid var(--border2)!important;border-radius:12px!important;color:var(--pri)!important;font-size:15px!important;font-weight:700!important;cursor:pointer!important;}
+.confirm-ok{flex:1!important;padding:12px!important;background:var(--red)!important;border:2px solid #b91c1c!important;border-radius:12px!important;color:#fff!important;font-size:15px!important;font-weight:700!important;cursor:pointer!important;}
 
-/* ─── YES/NO TOGGLE ─── */
-.yn-toggle {
-display: flex;
-gap: 5px;
-}
-.yn-btn {
-flex: 1;
-padding: 7px;
-border-radius: 7px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-size: 12px;
-font-weight: 500;
-color: var(–text3);
-cursor: pointer;
-transition: all 0.15s;
-text-align: center;
-}
-.yn-btn:hover { border-color: var(–accent2); }
-.yn-btn.selected-y { background: var(–green-light); border-color: var(–green); color: var(–green); }
-.yn-btn.selected-n { background: var(–rose-light); border-color: var(–rose); color: var(–rose); }
+/* EXPORT */
+.export-modal{background:#fff!important;border-radius:24px 24px 0 0!important;width:100%!important;max-width:430px!important;padding:16px 20px 40px!important;}
+.export-option{display:flex!important;align-items:center!important;gap:12px!important;padding:14px!important;background:var(--pri-bg)!important;border:2px solid var(--border)!important;border-radius:12px!important;cursor:pointer!important;margin-bottom:10px!important;}
+.export-option:active{background:var(--pri-light)!important;}
+.export-icon{font-size:22px!important;}
+.export-name{font-size:14px!important;font-weight:700!important;color:var(--text)!important;}
+.export-desc{font-size:12px!important;color:var(--text3)!important;margin-top:2px!important;}
+.cancel-btn{width:100%!important;margin-top:8px!important;padding:12px!important;background:var(--pri-light)!important;border:2px solid var(--border2)!important;border-radius:12px!important;color:var(--pri)!important;font-size:14px!important;font-weight:700!important;cursor:pointer!important;}
+.export-bar{display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;margin:0 20px 12px!important;padding:12px!important;background:var(--pri-light)!important;border:2px solid var(--border2)!important;border-radius:12px!important;cursor:pointer!important;color:var(--pri)!important;font-size:14px!important;font-weight:700!important;width:calc(100% - 40px)!important;}
 
-/* ─── NUMBER INPUT ─── */
-.number-input-row {
-display: flex;
-align-items: center;
-gap: 6px;
-}
-.number-input-row input {
-flex: 1;
-padding: 7px 10px;
-border-radius: 7px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 14px;
-font-weight: 500;
-color: var(–text);
-text-align: center;
--moz-appearance: textfield;
-}
-.number-input-row input:focus { outline: none; border-color: var(–accent2); background: var(–card); }
-.number-input-row input::-webkit-inner-spin-button,
-.number-input-row input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.unit-label { font-size: 11px; color: var(–text3); white-space: nowrap; }
-.num-adj { padding: 6px 10px; border-radius: 6px; border: 1px solid var(–border); background: var(–bg2); cursor: pointer; color: var(–text2); font-size: 14px; font-weight: 500; transition: background 0.15s; }
-.num-adj:hover { background: var(–border); }
+/* CHART */
+.chart-wrap{background:#fff!important;border:2px solid var(--border)!important;border-radius:14px!important;padding:16px!important;margin:0 20px 16px!important;}
 
-/* ─── TEXT INPUT ─── */
-.text-input {
-width: 100%;
-padding: 8px 10px;
-border-radius: 7px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-color: var(–text);
-resize: none;
-min-height: 60px;
-}
-.text-input:focus { outline: none; border-color: var(–accent2); background: var(–card); }
-.text-input.single { min-height: auto; height: 36px; resize: none; }
+/* HISTORY */
+.hist-item{display:flex!important;align-items:center!important;padding:12px 0!important;border-bottom:1.5px solid var(--border)!important;gap:10px!important;}
+.hist-item:last-child{border-bottom:none!important;}
+.hist-date{font-size:13px!important;font-weight:700!important;color:var(--text)!important;width:76px!important;flex-shrink:0!important;}
+.hist-chips{display:flex!important;gap:5px!important;flex-wrap:wrap!important;flex:1!important;}
+.hist-chip{font-size:10px!important;font-weight:700!important;padding:2px 7px!important;border-radius:20px!important;}
+.chip-ok{background:var(--green-bg)!important;color:var(--green-dark)!important;}
+.chip-mild{background:var(--amber-light)!important;color:#92400e!important;}
+.chip-mod{background:#fff7ed!important;color:#c2410c!important;}
+.chip-sev{background:var(--red-bg)!important;color:#991b1b!important;}
+.chip-y{background:var(--green-bg)!important;color:var(--green-dark)!important;}
+.hist-actions{display:flex!important;gap:8px!important;flex-shrink:0!important;}
+.hist-edit-btn,.hist-del-btn{background:none!important;border:none!important;font-size:16px!important;cursor:pointer!important;padding:0!important;}
 
-/* ─── MEDICATION SECTION ─── */
-.med-list { display: flex; flex-direction: column; gap: 8px; }
-.med-row {
-display: flex;
-align-items: center;
-gap: 8px;
-background: var(–bg);
-border: 1px solid var(–border);
-border-radius: 8px;
-padding: 8px 10px;
-}
-.med-name { flex: 2; font-size: 13px; font-weight: 500; color: var(–text); }
-.med-dose { flex: 1; font-size: 12px; color: var(–text2); }
-.med-taken { display: flex; gap: 5px; }
-.med-taken .yn-btn { padding: 5px 12px; font-size: 11px; }
-.med-remove { background: none; border: none; color: var(–text3); cursor: pointer; font-size: 16px; padding: 2px 4px; border-radius: 4px; }
-.med-remove:hover { color: var(–rose); background: var(–rose-light); }
-.add-med-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.add-med-row input {
-flex: 2;
-min-width: 120px;
-padding: 7px 10px;
-border-radius: 7px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-color: var(–text);
-}
-.add-med-row input:focus { outline: none; border-color: var(–accent2); }
-.add-med-row input.dose-input { flex: 1; min-width: 80px; }
+/* DETAIL MODAL for history */
+.detail-section{margin-bottom:16px!important;}
+.detail-section-title{font-size:11px!important;font-weight:800!important;color:var(--text3)!important;letter-spacing:.06em!important;text-transform:uppercase!important;margin-bottom:6px!important;}
+.detail-row{display:flex!important;justify-content:space-between!important;align-items:center!important;padding:6px 0!important;border-bottom:1px solid var(--pri-bg)!important;}
+.detail-row:last-child{border-bottom:none!important;}
+.detail-key{font-size:13px!important;color:var(--text2)!important;font-weight:500!important;}
+.detail-val{font-size:13px!important;font-weight:700!important;color:var(--text)!important;}
 
-/* ─── NOTES ─── */
-.notes-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px;
-}
-.notes-card textarea {
-width: 100%;
-border: none;
-background: transparent;
-font-family: ‘Lora’, serif;
-font-size: 14px;
-line-height: 1.7;
-color: var(–text);
-resize: none;
-min-height: 90px;
-}
-.notes-card textarea:focus { outline: none; }
-.notes-card textarea::placeholder { color: var(–text3); font-style: italic; }
+/* PAGE TABS */
+.page-tabs{display:flex!important;gap:6px!important;margin:14px 20px 0!important;}
+.page-tab{flex:1!important;padding:8px 4px!important;border-radius:10px!important;font-size:12px!important;font-weight:700!important;border:2px solid var(--border)!important;background:var(--pri-bg)!important;color:var(--text2)!important;cursor:pointer!important;text-align:center!important;}
+.page-tab.active{background:var(--pri)!important;border-color:var(--pri-dark)!important;color:#fff!important;}
 
-/* ─── SAVE BAR ─── */
-.save-bar {
-position: fixed;
-bottom: 0; left: 0; right: 0;
-background: var(–card);
-border-top: 1px solid var(–border);
-padding: 12px 24px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 12px;
-z-index: 100;
-flex-wrap: wrap;
-}
-.save-bar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.save-status { font-size: 12px; color: var(–text3); font-style: italic; }
-.save-status.saved { color: var(–green); }
-.export-btns { display: flex; gap: 8px; }
+/* PERIOD SELECTOR for insights */
+.insight-period-tabs{display:flex!important;gap:5px!important;margin:10px 20px 0!important;}
+.insight-period-tab{flex:1!important;padding:6px 4px!important;border-radius:8px!important;font-size:11px!important;font-weight:700!important;border:2px solid var(--border)!important;background:var(--pri-bg)!important;color:var(--text2)!important;cursor:pointer!important;text-align:center!important;}
+.insight-period-tab.active{background:var(--amber)!important;border-color:var(--amber)!important;color:#fff!important;}
 
-/* ─── HISTORY VIEW ─── */
-.history-section { margin-top: 32px; }
-.history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.history-table-wrap { overflow-x: auto; border-radius: var(–radius); border: 1px solid var(–border); }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { background: var(–bg2); padding: 9px 12px; text-align: left; font-weight: 500; color: var(–text2); border-bottom: 1px solid var(–border); white-space: nowrap; }
-td { padding: 8px 12px; border-bottom: 1px solid var(–border); color: var(–text); vertical-align: middle; white-space: nowrap; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(–bg); }
-.badge {
-display: inline-block;
-padding: 2px 7px;
-border-radius: 20px;
-font-size: 10px;
-font-weight: 600;
-}
-.badge-1 { background: var(–teal-light); color: var(–teal); }
-.badge-2 { background: var(–green-light); color: var(–green); }
-.badge-3 { background: var(–amber-light); color: var(–amber); }
-.badge-4 { background: var(–rose-light); color: var(–rose); }
-.badge-y { background: var(–green-light); color: var(–green); }
-.badge-n { background: var(–bg2); color: var(–text3); }
+/* STATUS BANNER */
+.status-banner{margin:10px 20px 0!important;border-radius:14px!important;padding:14px 16px!important;display:flex!important;align-items:center!important;gap:12px!important;}
+.status-banner.ok{background:var(--green-bg)!important;border:2px solid #bbf7d0!important;}
+.status-banner.warn{background:var(--amber-light)!important;border:2px solid var(--amber-border)!important;}
+.status-banner.alert{background:var(--red-bg)!important;border:2px solid #fecaca!important;}
+.status-icon{font-size:26px!important;flex-shrink:0!important;}
+.status-title{font-size:14px!important;font-weight:800!important;color:var(--text)!important;}
+.status-sub{font-size:12px!important;color:var(--text2)!important;margin-top:2px!important;line-height:1.4!important;}
 
-/* ─── CPTSD-specific ─── */
-.cptsd-accent { color: var(–teal); }
-.cptsd-section .field-card { border-left-color: var(–teal); }
-.adhd-accent { color: var(–indigo); }
-.adhd-section .field-card { border-left-color: var(–indigo); }
-
-/* ─── DIVIDER ─── */
-.divider { border: none; border-top: 1px solid var(–border); margin: 4px 0 20px; }
-
-/* ─── TOP DATE BAR ─── */
-.date-bar {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 12px 18px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 20px;
-flex-wrap: wrap;
-gap: 10px;
-}
-.date-display {
-font-family: ‘Lora’, serif;
-font-size: 18px;
-font-weight: 600;
-color: var(–text);
-}
-.date-display .weekday { font-weight: 400; font-style: italic; color: var(–text2); font-size: 15px; margin-left: 8px; }
-.date-bar-right { display: flex; gap: 8px; align-items: center; }
-
-/* ─── SPECIAL INPUTS ─── */
-.multi-check {
-display: flex;
-flex-wrap: wrap;
-gap: 5px;
-}
-.check-btn {
-padding: 5px 11px;
-border-radius: 20px;
-border: 1px solid var(–border);
-background: var(–bg);
-font-size: 11px;
-color: var(–text2);
-cursor: pointer;
-transition: all 0.15s;
-}
-.check-btn:hover { border-color: var(–accent2); }
-.check-btn.selected { background: var(–amber-light); border-color: var(–accent2); color: var(–accent); font-weight: 500; }
-.check-btn.selected-teal { background: var(–teal-light); border-color: var(–teal); color: var(–teal); }
-.check-btn.selected-indigo { background: var(–indigo-light); border-color: var(–indigo); color: var(–indigo); }
-
-/* ─── FLASH MESSAGE ─── */
-.flash {
-position: fixed;
-top: 80px; right: 24px;
-background: var(–teal);
-color: #fff;
-padding: 10px 20px;
-border-radius: 10px;
-font-size: 13px;
-font-weight: 500;
-z-index: 999;
-opacity: 0;
-transform: translateY(-8px);
-transition: all 0.25s;
-pointer-events: none;
-}
-.flash.show { opacity: 1; transform: translateY(0); }
-
-/* ─── RESPONSIVE ─── */
-@media (max-width: 600px) {
-.header { padding: 10px 14px; }
-.main { padding: 14px 12px 80px; }
-.cards-grid { grid-template-columns: 1fr 1fr; }
-.tab { padding: 6px 10px; font-size: 12px; }
-}
+/* FLASH */
+.flash{position:fixed!important;top:20px!important;left:50%!important;transform:translateX(-50%) translateY(-8px)!important;background:var(--text)!important;color:#fff!important;padding:10px 22px!important;border-radius:22px!important;font-size:13px!important;font-weight:600!important;z-index:999!important;opacity:0!important;transition:all .25s!important;pointer-events:none!important;white-space:nowrap!important;}
+.flash.show{opacity:1!important;transform:translateX(-50%) translateY(0)!important;}
 </style>
-
 </head>
 <body>
+<div id="app">
 
-<!-- HEADER -->
-
-<header class="header">
-  <div class="header-left">
-    <div class="logo">Mood Journal <span>daily tracker</span></div>
-    <nav class="tabs">
-      <button class="tab active" data-tab="general">🌿 General</button>
-      <button class="tab" data-tab="cptsd">🌊 CPTSD</button>
-      <button class="tab" data-tab="adhd">⚡ ADHD</button>
-    </nav>
-  </div>
-  <div class="header-right">
-    <div class="date-nav">
-      <button class="btn-icon" onclick="changeDay(-1)">‹</button>
-      <input type="date" id="mainDate" onchange="loadDay()">
-      <button class="btn-icon" onclick="changeDay(1)">›</button>
+<!-- ═══════════ PAGE: LOG ═══════════ -->
+<div id="page-log" class="page active">
+  <div class="header">
+    <div class="header-inner">
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setLogTab('general',this)">🌿 General</button>
+        <button class="period-tab" onclick="setLogTab('cptsd',this)">🌊 CPTSD</button>
+        <button class="period-tab" onclick="setLogTab('adhd',this)">⚡ ADHD</button>
+      </div>
+      <div class="period-nav">
+        <button class="period-btn" id="btn-prev-day" onclick="changeDay(-1)">&#8249;</button>
+        <div class="period-label-wrap">
+          <div class="period-main" id="log-date-label">—</div>
+          <div id="log-today-badge" style="margin-top:3px;text-align:center;display:none;"><span class="period-sub">Today</span></div>
+        </div>
+        <button class="period-btn" id="btn-next-day" onclick="changeDay(1)">&#8250;</button>
+      </div>
     </div>
-    <button class="btn btn-secondary" onclick="goToday()">Today</button>
   </div>
-</header>
 
-<!-- FLASH -->
+  <!-- ── GENERAL ── -->
+  <div id="log-general">
+    <div class="sec-pad"><div class="section-title">Sleep</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Hours Slept</div>
+        <div class="num-row">
+          <button class="num-adj" onclick="adj('sleepHours',-.5)">−</button>
+          <input type="number" class="num-inp" id="f-sleepHours" min="0" max="24" step=".5" placeholder="—">
+          <button class="num-adj" onclick="adj('sleepHours',.5)">+</button>
+          <span class="num-unit">hrs</span>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Restful sleep</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-restfulSleep" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Insomnia<small>Difficulty falling / staying asleep</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-insomnia" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Sleep Quality<small>1 = poor · 4 = great</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="sleepQuality" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="sleepQuality" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="sleepQuality" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="sleepQuality" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Mood & Emotions</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Depressed Mood<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="depressedMood" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="depressedMood" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="depressedMood" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="depressedMood" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Elevated Mood<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="elevatedMood" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="elevatedMood" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="elevatedMood" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="elevatedMood" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Irritability<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="irritability" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="irritability" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="irritability" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="irritability" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Anxiety<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="anxiety" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="anxiety" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="anxiety" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="anxiety" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Overall Outlook<small>1 = very low · 4 = sharp</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="overallOutlook" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="overallOutlook" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="overallOutlook" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="overallOutlook" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Loneliness<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="loneliness" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="loneliness" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="loneliness" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="loneliness" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Energy & Functioning</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Productivity<small>1 = low · 4 = high</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="productivity" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="productivity" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="productivity" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="productivity" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Motivation<small>1 = low · 4 = high</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="motivation" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="motivation" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="motivation" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="motivation" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Chores / Household</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-chores" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Hygiene</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-hygiene" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Physical & Lifestyle</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Nutrition<small>1 = poor · 4 = great</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="nutrition" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="nutrition" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="nutrition" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="nutrition" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Appetite Change<small>1 = normal · 4 = severe change</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="appetite" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="appetite" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="appetite" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="appetite" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Time Outside</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-outsideTime" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Exercise</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-exercise" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Friends / Family time</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-socialTime" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Mindfulness / Meditation</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-meditation" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Physical Pain / Symptoms</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-physicalPain" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Alcohol<small>1 = none · 4 = heavy</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="alcohol" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="alcohol" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="alcohol" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="alcohol" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Caffeine<small>1 = none · 4 = high</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="caffeine" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="caffeine" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="caffeine" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="caffeine" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Media & Support</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Talk Therapy</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-talkTherapy" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Social Media<small>1 = low · 4 = high</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="socialMedia" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="socialMedia" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="socialMedia" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="socialMedia" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">News / Media Exposure<small>1 = low · 4 = high</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="newsMedia" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="newsMedia" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="newsMedia" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="newsMedia" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Body</div></div>
+    <div class="block">
+      <div class="track-item">
+        <div class="track-label">Weight</div>
+        <div class="num-row">
+          <input type="number" class="num-inp" id="f-weight" min="0" step=".1" placeholder="—">
+          <span class="num-unit">kg</span>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Menstruation</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-menstruation" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Medications</div></div>
+    <div class="block" id="med-list-block"></div>
+    <div style="margin:0 20px 14px!important;">
+      <button class="export-bar" style="margin:0!important;width:100%!important;" onclick="openMedModal(null)">+ Add medication</button>
+    </div>
+
+    <div class="sec-pad"><div class="section-title">Daily Notes</div></div>
+    <div style="margin:0 20px 20px!important;">
+      <textarea id="f-generalNotes" class="form-input" style="min-height:80px!important;resize:none!important;font-size:14px!important;line-height:1.5!important;" placeholder="How was your day? Notable events, feelings…" oninput="markDirty()"></textarea>
+    </div>
+  </div><!-- /log-general -->
+
+  <!-- ── CPTSD ── -->
+  <div id="log-cptsd" style="display:none;">
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Safety & Nervous System</div></div>
+    <div class="block" style="border-color:var(--teal-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Felt Safe Today<small>1 = not at all · 4 = fully safe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="feltSafe" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="feltSafe" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="feltSafe" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="feltSafe" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Hypervigilance</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-hypervigilance" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item" style="flex-wrap:wrap!important;gap:8px!important;">
+        <div class="track-label" style="width:100%!important;">Nervous System State</div>
+        <div style="width:100%!important;padding-bottom:8px!important;">
+          <div class="pills-wrap" id="ns-pills">
+            <button class="pill" data-f="nsState" data-v="calm" onclick="togglePill(this)">Calm</button>
+            <button class="pill" data-f="nsState" data-v="activated" onclick="togglePill(this)">Activated</button>
+            <button class="pill" data-f="nsState" data-v="freeze" onclick="togglePill(this)">Freeze / Shutdown</button>
+            <button class="pill" data-f="nsState" data-v="fawn" onclick="togglePill(this)">Fawn</button>
+            <button class="pill" data-f="nsState" data-v="mixed" onclick="togglePill(this)">Mixed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Trauma Responses</div></div>
+    <div class="block" style="border-color:var(--teal-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Flashbacks</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-flashbacks" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Dissociation<small>Derealization, feeling detached</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-dissociation" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Cognitive Fog<small>Mental cloudiness, difficulty thinking</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-cognitiveFog" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Triggered Today</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-triggered" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Nightmares</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-nightmares" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Insomnia<small>Racing thoughts preventing sleep</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-cptsdInsomnia" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Panic Attacks</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-panicAttacks" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Self-Destructiveness</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-selfDestructive" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Emotional Regulation</div></div>
+    <div class="block" style="border-color:var(--teal-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Emotional Dysregulation<small>1 = stable · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="emotDysreg" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="emotDysreg" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="emotDysreg" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="emotDysreg" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Shame / Self-Criticism<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="shame" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="shame" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="shame" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="shame" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Isolation Urge<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="isolationUrge" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="isolationUrge" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="isolationUrge" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="isolationUrge" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Racing Thoughts / Overthinking<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="racingThoughts" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="racingThoughts" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="racingThoughts" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="racingThoughts" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Somatic Symptoms</div></div>
+    <div class="block" style="border-color:var(--teal-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Body Tension<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="bodyTension" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="bodyTension" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="bodyTension" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="bodyTension" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div style="padding:8px 0 12px!important;">
+        <div style="font-size:11px!important;font-weight:800!important;color:var(--text3)!important;letter-spacing:.06em!important;text-transform:uppercase!important;margin-bottom:8px!important;">Symptoms present today</div>
+        <div class="pills-wrap" id="somatic-pills">
+          <button class="pill" data-f="somaticSx" data-v="nausea" onclick="togglePill(this)">Nausea</button>
+          <button class="pill" data-f="somaticSx" data-v="headache" onclick="togglePill(this)">Headache</button>
+          <button class="pill" data-f="somaticSx" data-v="chest" onclick="togglePill(this)">Chest tightness</button>
+          <button class="pill" data-f="somaticSx" data-v="fatigue" onclick="togglePill(this)">Fatigue</button>
+          <button class="pill" data-f="somaticSx" data-v="blurVision" onclick="togglePill(this)">Blurred vision</button>
+          <button class="pill" data-f="somaticSx" data-v="backPain" onclick="togglePill(this)">Back pain</button>
+          <button class="pill" data-f="somaticSx" data-v="vertigo" onclick="togglePill(this)">Vertigo</button>
+          <button class="pill" data-f="somaticSx" data-v="stomachPain" onclick="togglePill(this)">Stomach pain</button>
+          <button class="pill" data-f="somaticSx" data-v="allergy" onclick="togglePill(this)">Allergy reaction</button>
+          <button class="pill" data-f="somaticSx" data-v="other" onclick="togglePill(this)">Other</button>
+          <button class="pill" data-f="somaticSx" data-v="none" onclick="togglePill(this)">None</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Coping Used</div></div>
+    <div class="block" style="border-color:var(--teal-border)!important;">
+      <div style="padding:8px 0 12px!important;">
+        <div class="pills-wrap" id="coping-pills">
+          <button class="pill" data-f="copingUsed" data-v="breathing" onclick="togglePill(this)">Breathing</button>
+          <button class="pill" data-f="copingUsed" data-v="grounding" onclick="togglePill(this)">Grounding (5-4-3-2-1)</button>
+          <button class="pill" data-f="copingUsed" data-v="journaling" onclick="togglePill(this)">Journaling</button>
+          <button class="pill" data-f="copingUsed" data-v="therapy" onclick="togglePill(this)">Therapy</button>
+          <button class="pill" data-f="copingUsed" data-v="movement" onclick="togglePill(this)">Movement</button>
+          <button class="pill" data-f="copingUsed" data-v="selfCompassion" onclick="togglePill(this)">Self-compassion</button>
+          <button class="pill" data-f="copingUsed" data-v="reachOut" onclick="togglePill(this)">Reached out</button>
+          <button class="pill" data-f="copingUsed" data-v="rest" onclick="togglePill(this)">Rest / safety</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--teal)!important;">Trigger & Coping Log</div></div>
+    <div style="margin:0 20px 20px!important;">
+      <textarea id="f-cptsdTrigger" class="form-input" style="min-height:80px!important;resize:none!important;font-size:14px!important;line-height:1.5!important;" placeholder="What triggered you today? Context, situations, people…" oninput="markDirty()"></textarea>
+    </div>
+  </div><!-- /log-cptsd -->
+
+  <!-- ── ADHD ── -->
+  <div id="log-adhd" style="display:none;">
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">Attention & Focus</div></div>
+    <div class="block" style="border-color:var(--indigo-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Focus / Concentration<small>1 = very low · 4 = sharp</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="focus" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="focus" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="focus" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="focus" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Distractibility<small>1 = very low · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="distractibility" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="distractibility" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="distractibility" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="distractibility" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Brain Fog<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="brainFog" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="brainFog" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="brainFog" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="brainFog" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Hyperactivity / Restlessness<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="hyperactivity" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="hyperactivity" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="hyperactivity" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="hyperactivity" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Hyperfocus</div>
+        <label class="ios-toggle"><input type="checkbox" id="f-hyperfocus" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">ADHD Paralysis<small>Unable to start despite wanting to</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-adhdParalysis" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Emotional Dysregulation<small>Emotional flooding or reactivity</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="adhdEmotDysreg" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="adhdEmotDysreg" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="adhdEmotDysreg" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="adhdEmotDysreg" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">Executive Function</div></div>
+    <div class="block" style="border-color:var(--indigo-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Task Initiation<small>1 = paralyzed · 4 = easy</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="taskInit" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="taskInit" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="taskInit" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="taskInit" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Task Completion<small>1 = Paralyzed · 4 = Easy</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="taskCompletion" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="taskCompletion" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="taskCompletion" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="taskCompletion" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Time Blindness / Disorganization<small>1 = Paralyzed · 4 = Oriented</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="timeBlindness" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="timeBlindness" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="timeBlindness" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="timeBlindness" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Working Memory<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="workingMemory" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="workingMemory" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="workingMemory" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="workingMemory" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">RSD — Rejection Sensitivity<small>1 = none · 4 = severe</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="rsd" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="rsd" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="rsd" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="rsd" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div class="track-item">
+        <div class="track-label">Verbal Expression<small>Difficulty verbalizing when overwhelmed</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="verbalExpr" data-v="1" onclick="setScale(this)" title="Easy">1</button>
+          <button class="scale-pill" data-f="verbalExpr" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="verbalExpr" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="verbalExpr" data-v="4" onclick="setScale(this)" title="Shut down">4</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">ADHD Symptoms Today</div></div>
+    <div class="block" style="border-color:var(--indigo-border)!important;">
+      <div style="padding:10px 0!important;">
+        <div class="pills-wrap" id="adhd-sx-pills">
+          <button class="pill" data-f="adhdSx" data-v="fidgeting" onclick="togglePill(this)">Fidgeting</button>
+          <button class="pill" data-f="adhdSx" data-v="talkExcessive" onclick="togglePill(this)">Talking excessively</button>
+          <button class="pill" data-f="adhdSx" data-v="diffStayStill" onclick="togglePill(this)">Difficulty staying still</button>
+          <button class="pill" data-f="adhdSx" data-v="attentionDetail" onclick="togglePill(this)">Hyper-focus on detail</button>
+          <button class="pill" data-f="adhdSx" data-v="missingDetail" onclick="togglePill(this)">Missing details / careless</button>
+          <button class="pill" data-f="adhdSx" data-v="sensorySensit" onclick="togglePill(this)">Sensory sensitivities</button>
+          <button class="pill" data-f="adhdSx" data-v="interrupting" onclick="togglePill(this)">Interrupting others</button>
+          <button class="pill" data-f="adhdSx" data-v="losingItems" onclick="togglePill(this)">Losing items</button>
+          <button class="pill" data-f="adhdSx" data-v="forgetful" onclick="togglePill(this)">Distracted / forgetful</button>
+          <button class="pill" data-f="adhdSx" data-v="poorCoordination" onclick="togglePill(this)">Poor coordination</button>
+          <button class="pill" data-f="adhdSx" data-v="impulsive" onclick="togglePill(this)">Impulsive decisions</button>
+          <button class="pill" data-f="adhdSx" data-v="other" onclick="togglePill(this)">Other</button>
+          <button class="pill" data-f="adhdSx" data-v="none" onclick="togglePill(this)">None</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">Sensory Overload / Overstimulation</div></div>
+    <div class="block" style="border-color:var(--indigo-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Overstimulation<small>1 = none · 4 = overwhelming</small></div>
+        <div class="scale-row" style="width:160px;">
+          <button class="scale-pill" data-f="overstimulation" data-v="1" onclick="setScale(this)">1</button>
+          <button class="scale-pill" data-f="overstimulation" data-v="2" onclick="setScale(this)">2</button>
+          <button class="scale-pill" data-f="overstimulation" data-v="3" onclick="setScale(this)">3</button>
+          <button class="scale-pill" data-f="overstimulation" data-v="4" onclick="setScale(this)">4</button>
+        </div>
+      </div>
+      <div style="padding:4px 0 12px!important;">
+        <div style="font-size:11px!important;font-weight:800!important;color:var(--text3)!important;letter-spacing:.06em!important;text-transform:uppercase!important;margin-bottom:8px!important;">Sensory channels affected</div>
+        <div class="pills-wrap" id="sensory-pills">
+          <button class="pill" data-f="sensoryCh" data-v="auditory" onclick="togglePill(this)">👂 Auditory</button>
+          <button class="pill" data-f="sensoryCh" data-v="visual" onclick="togglePill(this)">👁 Visual</button>
+          <button class="pill" data-f="sensoryCh" data-v="tactile" onclick="togglePill(this)">🤚 Touch</button>
+          <button class="pill" data-f="sensoryCh" data-v="textures" onclick="togglePill(this)">🧶 Textures</button>
+          <button class="pill" data-f="sensoryCh" data-v="olfactory" onclick="togglePill(this)">👃 Smell</button>
+          <button class="pill" data-f="sensoryCh" data-v="proprioceptive" onclick="togglePill(this)">🫀 Proprioceptive (body awareness)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">Sleep</div></div>
+    <div class="block" style="border-color:var(--indigo-border)!important;">
+      <div class="track-item">
+        <div class="track-label">Unable to sleep — overwhelming thoughts<small>Racing mind preventing rest</small></div>
+        <label class="ios-toggle"><input type="checkbox" id="f-adhdSleepRacing" onchange="markDirty()"><span class="ios-toggle-track"></span></label>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">Strategies Used</div></div>
+    <div style="margin:0 20px 20px!important;">
+      <div class="pills-wrap" id="adhd-strat-pills">
+        <button class="pill" data-f="adhdStrategies" data-v="timer" onclick="togglePill(this)">⏱ Timer / Alarm</button>
+        <button class="pill" data-f="adhdStrategies" data-v="lists" onclick="togglePill(this)">📋 Task lists</button>
+        <button class="pill" data-f="adhdStrategies" data-v="bodyDouble" onclick="togglePill(this)">👥 Body doubling</button>
+        <button class="pill" data-f="adhdStrategies" data-v="movement" onclick="togglePill(this)">🚶 Movement breaks</button>
+        <button class="pill" data-f="adhdStrategies" data-v="reminders" onclick="togglePill(this)">🔔 External reminders</button>
+        <button class="pill" data-f="adhdStrategies" data-v="lowStim" onclick="togglePill(this)">🔇 Low-stimulus env.</button>
+      </div>
+    </div>
+
+    <div class="sec-pad"><div class="section-title" style="color:var(--indigo)!important;">ADHD Notes</div></div>
+    <div style="margin:0 20px 20px!important;">
+      <textarea id="f-adhdNotes" class="form-input" style="min-height:64px!important;resize:none!important;font-size:14px!important;" placeholder="What helped focus today? Patterns noticed…" oninput="markDirty()"></textarea>
+    </div>
+  </div><!-- /log-adhd -->
+
+</div><!-- /page-log -->
+
+<!-- ═══════════ PAGE: HISTORY ═══════════ -->
+<div id="page-history" class="page">
+  <div class="header">
+    <div class="header-inner">
+      <div style="font-size:17px!important;font-weight:800!important;color:#fff!important;text-align:center!important;padding:4px 0!important;">History</div>
+    </div>
+  </div>
+  <div class="page-tabs">
+    <button class="page-tab active" onclick="setHistTab('general',this)">General</button>
+    <button class="page-tab" onclick="setHistTab('cptsd',this)">CPTSD</button>
+    <button class="page-tab" onclick="setHistTab('adhd',this)">ADHD</button>
+  </div>
+  <div class="insight-period-tabs">
+    <button class="insight-period-tab active" onclick="setHistPeriod(7,this)">7 days</button>
+    <button class="insight-period-tab" onclick="setHistPeriod(14,this)">14 days</button>
+    <button class="insight-period-tab" onclick="setHistPeriod(30,this)">30 days</button>
+    <button class="insight-period-tab" onclick="setHistPeriod(90,this)">90 days</button>
+    <button class="insight-period-tab" onclick="setHistPeriod(365,this)">All</button>
+  </div>
+  <div style="height:14px!important;"></div>
+  <button class="export-bar" onclick="openExportModal()">⬇ Export / Backup</button>
+  <div id="history-list" class="block"><div class="empty-state">No entries yet. Start logging to see your history here.</div></div>
+</div>
+
+<!-- ═══════════ PAGE: INSIGHTS ═══════════ -->
+<div id="page-charts" class="page">
+  <div class="header">
+    <div class="header-inner">
+      <div style="font-size:17px!important;font-weight:800!important;color:#fff!important;text-align:center!important;padding:4px 0!important;">Insights</div>
+    </div>
+  </div>
+  <div class="page-tabs">
+    <button class="page-tab active" onclick="setChartTab('general',this)">General</button>
+    <button class="page-tab" onclick="setChartTab('cptsd',this)">CPTSD</button>
+    <button class="page-tab" onclick="setChartTab('adhd',this)">ADHD</button>
+  </div>
+  <div class="insight-period-tabs">
+    <button class="insight-period-tab active" onclick="setInsightPeriod(14,this)">14 days</button>
+    <button class="insight-period-tab" onclick="setInsightPeriod(30,this)">30 days</button>
+    <button class="insight-period-tab" onclick="setInsightPeriod(60,this)">60 days</button>
+    <button class="insight-period-tab" onclick="setInsightPeriod(90,this)">90 days</button>
+  </div>
+  <div style="height:10px!important;"></div>
+
+  <!-- STATUS OVERVIEW -->
+  <div id="status-banner-wrap"></div>
+
+  <!-- METRIC CARDS -->
+  <div id="insight-cards" class="summary" style="margin-bottom:14px!important;"></div>
+
+  <!-- GENERAL CHARTS -->
+  <div id="charts-general">
+    <div class="sec-pad"><div class="section-title" id="mood-chart-title">Mood trends</div></div>
+    <div class="chart-wrap"><canvas id="chart-mood" height="200"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="sleep-chart-title">Sleep hours</div></div>
+    <div class="chart-wrap"><canvas id="chart-sleep" height="180"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="habits-chart-title">Lifestyle habits</div></div>
+    <div class="chart-wrap"><canvas id="chart-habits" height="220"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="corr-chart-title">Correlation — Sleep vs Mood</div></div>
+    <div class="chart-wrap"><canvas id="chart-corr-sleep-mood" height="180"></canvas></div>
+  </div>
+  <!-- CPTSD CHARTS -->
+  <div id="charts-cptsd" style="display:none;">
+    <div class="sec-pad"><div class="section-title" id="cptsd-sx-title">CPTSD symptoms</div></div>
+    <div class="chart-wrap"><canvas id="chart-cptsd-sx" height="220"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="trauma-freq-title">Trauma responses frequency — last 30 days</div></div>
+    <div class="chart-wrap"><canvas id="chart-trauma" height="200"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="cptsd-corr-title">Correlation of Felt Safe vs Dysregulation</div></div>
+    <div class="chart-wrap"><canvas id="chart-corr-safe-dysreg" height="180"></canvas></div>
+  </div>
+  <!-- ADHD CHARTS -->
+  <div id="charts-adhd" style="display:none;">
+    <div class="sec-pad"><div class="section-title" id="exec-chart-title">Executive function</div></div>
+    <div class="chart-wrap"><canvas id="chart-exec" height="220"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="sensory-chart-title">Sensory overload frequency — last 30 days</div></div>
+    <div class="chart-wrap"><canvas id="chart-sensory" height="180"></canvas></div>
+    <div class="sec-pad"><div class="section-title" id="adhd-corr-title">Correlation of Sleep vs Focus</div></div>
+    <div class="chart-wrap"><canvas id="chart-corr-sleep-focus" height="180"></canvas></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div style="height:8px!important;"></div>
+<button class="add-btn" onclick="confirmSaveDay()">💾 Save entry</button>
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('log',this)"><span class="nav-icon">📝</span><span>Log</span></button>
+  <button class="nav-btn" onclick="showPage('history',this)"><span class="nav-icon">📋</span><span>History</span></button>
+  <button class="nav-btn" onclick="showPage('charts',this)"><span class="nav-icon">📊</span><span>Insights</span></button>
+</div>
 
 <div class="flash" id="flash"></div>
 
-<!-- MAIN -->
-
-<main class="main">
-
-  <!-- ═══════════════ GENERAL TAB ═══════════════ -->
-
-  <div class="tab-panel active" id="panel-general">
-
-```
-<div class="date-bar">
-  <div>
-    <div class="date-display" id="dateLabelGeneral">—</div>
-    <div style="font-size:11px;color:var(--text3);margin-top:2px;">Click any field to log today's data</div>
-  </div>
-  <div class="date-bar-right">
-    <button class="btn btn-secondary" onclick="exportCSV('general')">⬇ Export CSV</button>
-    <button class="btn btn-primary" onclick="saveDay()">Save Day</button>
-  </div>
-</div>
-
-<!-- SLEEP -->
-<div class="section-group">
-  <div class="section-title">Sleep</div>
-  <div class="cards-grid">
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">🌙</span> Sleep Hours</div>
-      <div class="number-input-row">
-        <button class="num-adj" onclick="adjustNum('sleepHours',-0.5)">−</button>
-        <input type="number" id="sleepHours" min="0" max="24" step="0.5" placeholder="hrs">
-        <button class="num-adj" onclick="adjustNum('sleepHours',0.5)">+</button>
-        <span class="unit-label">hrs</span>
-      </div>
+<!-- MED MODAL -->
+<div class="modal-overlay" id="med-modal" style="display:none;" onclick="if(event.target.id==='med-modal')closeMedModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="med-modal-title">Add medication</div>
+    <div class="form-row">
+      <label class="form-label">Medication name</label>
+      <input type="text" class="form-input" id="med-inp-name" placeholder="e.g. Lamictal">
     </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">✨</span> Restful Sleep</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="restfulSleep" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="restfulSleep" data-val="N" onclick="setYN(this)">No</button>
-      </div>
+    <div class="form-row">
+      <label class="form-label">Dose</label>
+      <input type="text" class="form-input" id="med-inp-dose" placeholder="e.g. 200mg PM">
     </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">🌟</span> Sleep Quality <span class="tip">1=good, 4=bad</span></div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="sleepQuality" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="sleepQuality" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="sleepQuality" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="sleepQuality" data-val="4" onclick="setScale(this)">4</button>
-      </div>
+    <div class="form-row">
+      <label class="form-label">Notes (optional)</label>
+      <input type="text" class="form-input" id="med-inp-note" placeholder="e.g. with food">
     </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">⏰</span> Bedtime / Wake</div>
-      <div style="display:flex;gap:6px;">
-        <input type="time" id="bedtime" class="text-input single" style="flex:1;" placeholder="bed">
-        <input type="time" id="wakeTime" class="text-input single" style="flex:1;" placeholder="wake">
-      </div>
-    </div>
+    <button class="submit-btn" onclick="saveMedModal()">Save medication</button>
+    <button class="del-btn-modal" id="med-del-btn" onclick="deleteMedFromModal()" style="display:none!important;">Remove medication</button>
+    <button class="cancel-modal-btn" onclick="closeMedModal()">Cancel</button>
   </div>
 </div>
 
-<!-- MOOD & EMOTIONS -->
-<div class="section-group">
-  <div class="section-title">Mood & Emotions</div>
-  <div class="cards-grid">
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">😔</span> Depressed Mood <span class="tip">1=none 4=severe</span></div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="depressedMood" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">none</span></button>
-        <button class="scale-btn" data-field="depressedMood" data-val="2" onclick="setScale(this)">2<br><span style="font-size:9px">mild</span></button>
-        <button class="scale-btn" data-field="depressedMood" data-val="3" onclick="setScale(this)">3<br><span style="font-size:9px">mod</span></button>
-        <button class="scale-btn" data-field="depressedMood" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">severe</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">🌤</span> Elevated Mood</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="elevatedMood" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">none</span></button>
-        <button class="scale-btn" data-field="elevatedMood" data-val="2" onclick="setScale(this)">2<br><span style="font-size:9px">mild</span></button>
-        <button class="scale-btn" data-field="elevatedMood" data-val="3" onclick="setScale(this)">3<br><span style="font-size:9px">mod</span></button>
-        <button class="scale-btn" data-field="elevatedMood" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">high</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">😤</span> Irritability</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="irritability" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="irritability" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="irritability" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="irritability" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">😰</span> Anxiety</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="anxiety" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="anxiety" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="anxiety" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="anxiety" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">😊</span> Overall Outlook</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="overallOutlook" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">low</span></button>
-        <button class="scale-btn" data-field="overallOutlook" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="overallOutlook" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="overallOutlook" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">high</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">😟</span> Loneliness</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="loneliness" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="loneliness" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="loneliness" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="loneliness" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
+<!-- HISTORY DETAIL MODAL -->
+<div class="modal-overlay" id="hist-detail-modal" style="display:none;" onclick="if(event.target.id==='hist-detail-modal')closeHistDetail()">
+  <div class="modal" style="max-height:85vh!important;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="hist-detail-date"></div>
+    <div id="hist-detail-body"></div>
+    <button class="cancel-modal-btn" onclick="closeHistDetail()">Close</button>
   </div>
 </div>
 
-<!-- ENERGY & FUNCTION -->
-<div class="section-group">
-  <div class="section-title">Energy & Functioning</div>
-  <div class="cards-grid">
-    <div class="field-card accent-green">
-      <div class="field-label"><span class="icon">⚙️</span> Productivity</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="productivity" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="productivity" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="productivity" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="productivity" data-val="4" onclick="setScale(this)">4</button>
-      </div>
+<!-- EDIT HISTORY MODAL -->
+<div class="modal-overlay" id="edit-hist-modal" style="display:none;" onclick="if(event.target.id==='edit-hist-modal')closeEditHist()">
+  <div class="modal" style="max-height:85vh!important;overflow-y:auto!important;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="edit-hist-title">Edit Entry</div>
+    <div id="edit-hist-body">
+      <!-- Content will be loaded here -->
     </div>
-    <div class="field-card accent-green">
-      <div class="field-label"><span class="icon">🔋</span> Motivation</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="motivation" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="motivation" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="motivation" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="motivation" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-green">
-      <div class="field-label"><span class="icon">🏡</span> Chores / Household</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="chores" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="chores" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-green">
-      <div class="field-label"><span class="icon">🧹</span> Hygiene</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="hygiene" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="hygiene" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
+    <button class="submit-btn" onclick="saveEditedHist()">Save Changes</button>
+    <button class="cancel-modal-btn" onclick="closeEditHist()">Cancel</button>
+  </div>
+</div>
+<div class="modal-overlay" id="export-modal" style="display:none;" onclick="if(event.target.id==='export-modal')document.getElementById('export-modal').style.display='none'">
+  <div class="export-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Export & Backup</div>
+    <div class="export-option" onclick="exportCSV('general')"><span class="export-icon">📄</span><div><div class="export-name">General — CSV</div><div class="export-desc">Sleep, mood, lifestyle</div></div></div>
+    <div class="export-option" onclick="exportCSV('cptsd')"><span class="export-icon">🌊</span><div><div class="export-name">CPTSD — CSV</div><div class="export-desc">Trauma, nervous system, somatic</div></div></div>
+    <div class="export-option" onclick="exportCSV('adhd')"><span class="export-icon">⚡</span><div><div class="export-name">ADHD — CSV</div><div class="export-desc">Focus, executive function, sensory</div></div></div>
+    <div class="export-option" onclick="exportCSV('all')"><span class="export-icon">📑</span><div><div class="export-name">All data — CSV</div><div class="export-desc">Complete export, all fields</div></div></div>
+    <div class="export-option" onclick="exportJSON()"><span class="export-icon">🗂</span><div><div class="export-name">Full backup — JSON</div><div class="export-desc">Complete backup for restore</div></div></div>
+    <div class="export-option" onclick="triggerImport()"><span class="export-icon">📥</span><div><div class="export-name">Import backup — JSON</div><div class="export-desc">Restore from a backup file</div></div></div>
+    <input type="file" id="import-file-input" accept=".json" style="display:none!important;" onchange="importJSON(event)">
+    <button class="cancel-btn" onclick="document.getElementById('export-modal').style.display='none'">Cancel</button>
   </div>
 </div>
 
-<!-- PHYSICAL & LIFESTYLE -->
-<div class="section-group">
-  <div class="section-title">Physical & Lifestyle</div>
-  <div class="cards-grid">
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🥗</span> Nutrition</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="nutrition" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">poor</span></button>
-        <button class="scale-btn" data-field="nutrition" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="nutrition" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="nutrition" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">great</span></button>
-      </div>
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirm-dialog" style="display:none!important;">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Confirm</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="confirmResolve(false)" id="confirm-no-btn">No</button>
+      <button class="confirm-ok" id="confirm-ok-btn" onclick="confirmResolve(true)">Yes</button>
     </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🌳</span> Time Outside</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="outsideTime" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="outsideTime" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🏃</span> Exercise</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="exercise" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="exercise" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">👟</span> Daily Steps</div>
-      <div class="number-input-row">
-        <input type="number" id="dailySteps" min="0" step="100" placeholder="steps">
-        <span class="unit-label">steps</span>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">👥</span> Friends / Family</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="socialTime" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="socialTime" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🧘</span> Mindfulness / Meditation</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="meditation" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="meditation" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">🍷</span> Alcohol</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="alcohol" data-val="0" onclick="setScale(this)">None</button>
-        <button class="scale-btn" data-field="alcohol" data-val="1" onclick="setScale(this)">1–2</button>
-        <button class="scale-btn" data-field="alcohol" data-val="2" onclick="setScale(this)">3–4</button>
-        <button class="scale-btn" data-field="alcohol" data-val="3" onclick="setScale(this)">4+</button>
-      </div>
-    </div>
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">☕</span> Caffeine</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="caffeine" data-val="0" onclick="setScale(this)">None</button>
-        <button class="scale-btn" data-field="caffeine" data-val="1" onclick="setScale(this)">Low</button>
-        <button class="scale-btn" data-field="caffeine" data-val="2" onclick="setScale(this)">Mid</button>
-        <button class="scale-btn" data-field="caffeine" data-val="3" onclick="setScale(this)">High</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MEDIA & THERAPY -->
-<div class="section-group">
-  <div class="section-title">Media & Support</div>
-  <div class="cards-grid cards-grid-sm">
-    <div class="field-card">
-      <div class="field-label"><span class="icon">🗣</span> Talk Therapy</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="talkTherapy" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="talkTherapy" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card">
-      <div class="field-label"><span class="icon">📱</span> Social Media <span class="tip">1=low 4=high</span></div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="socialMedia" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="socialMedia" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="socialMedia" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="socialMedia" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card">
-      <div class="field-label"><span class="icon">📰</span> News / Media</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="newsMedia" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="newsMedia" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="newsMedia" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="newsMedia" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- BODY -->
-<div class="section-group">
-  <div class="section-title">Body</div>
-  <div class="cards-grid cards-grid-sm">
-    <div class="field-card accent-amber">
-      <div class="field-label"><span class="icon">⚖️</span> Weight</div>
-      <div class="number-input-row">
-        <input type="number" id="weight" min="0" step="0.1" placeholder="—">
-        <span class="unit-label">kg</span>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">🌸</span> Menstruation</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="menstruation" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="menstruation" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-rose">
-      <div class="field-label"><span class="icon">💊</span> Pain / Physical Symptoms</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="physicalPain" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="physicalPain" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="physicalPain" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="physicalPain" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MEDICATIONS -->
-<div class="section-group">
-  <div class="section-title">Medications</div>
-  <div class="notes-card">
-    <div class="med-list" id="medList"></div>
-    <div style="margin-top:10px;">
-      <div class="add-med-row">
-        <input type="text" id="newMedName" placeholder="Medication name (e.g. Lamictal)">
-        <input type="text" id="newMedDose" class="dose-input" placeholder="Dose (e.g. 200mg)">
-        <button class="btn btn-secondary" onclick="addMedication()">+ Add</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- NOTES -->
-<div class="section-group">
-  <div class="section-title">Daily Notes</div>
-  <div class="notes-card">
-    <textarea id="generalNotes" placeholder="How was your day? Any notable events, symptoms, thoughts…"></textarea>
-  </div>
-</div>
-
-<!-- HISTORY -->
-<div class="history-section">
-  <div class="history-header">
-    <div class="section-title" style="margin:0;">Recent History</div>
-    <button class="btn btn-secondary" onclick="exportCSV('general')">⬇ Export CSV</button>
-  </div>
-  <div class="history-table-wrap">
-    <table id="historyTableGeneral">
-      <thead>
-        <tr>
-          <th>Date</th><th>Sleep</th><th>Depr.</th><th>Elev.</th><th>Irritab.</th><th>Anxiety</th><th>Prod.</th><th>Motiv.</th><th>Exercise</th><th>Therapy</th><th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="historyBodyGeneral"></tbody>
-    </table>
-  </div>
-</div>
-```
-
-  </div><!-- /panel-general -->
-
-  <!-- ═══════════════ CPTSD TAB ═══════════════ -->
-
-  <div class="tab-panel" id="panel-cptsd">
-
-```
-<div class="date-bar">
-  <div>
-    <div class="date-display" id="dateLabelCPTSD">—</div>
-    <div style="font-size:11px;color:var(--teal);margin-top:2px;">CPTSD-specific tracking</div>
-  </div>
-  <div class="date-bar-right">
-    <button class="btn btn-secondary" onclick="exportCSV('cptsd')">⬇ Export CSV</button>
-    <button class="btn" style="background:var(--teal);color:#fff;" onclick="saveDay()">Save Day</button>
-  </div>
-</div>
-
-<!-- SAFETY & GROUNDING -->
-<div class="section-group cptsd-section">
-  <div class="section-title cptsd-accent">Safety & Nervous System</div>
-  <div class="cards-grid">
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🛡</span> Felt Safe Today</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="feltSafe" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">not at all</span></button>
-        <button class="scale-btn" data-field="feltSafe" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="feltSafe" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="feltSafe" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">fully safe</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">⚡</span> Hypervigilance</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="hypervigilance" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="hypervigilance" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="hypervigilance" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="hypervigilance" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🫀</span> Nervous System State</div>
-      <div class="multi-check">
-        <button class="check-btn" data-field="nsState" data-val="calm" onclick="toggleCheck(this,'teal')">Calm</button>
-        <button class="check-btn" data-field="nsState" data-val="activated" onclick="toggleCheck(this,'teal')">Activated</button>
-        <button class="check-btn" data-field="nsState" data-val="freeze" onclick="toggleCheck(this,'teal')">Freeze/Shutdown</button>
-        <button class="check-btn" data-field="nsState" data-val="fawn" onclick="toggleCheck(this,'teal')">Fawn</button>
-        <button class="check-btn" data-field="nsState" data-val="mixed" onclick="toggleCheck(this,'teal')">Mixed</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🧘</span> Grounding Practiced</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="groundingPracticed" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="groundingPracticed" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- TRAUMA RESPONSES -->
-<div class="section-group cptsd-section">
-  <div class="section-title cptsd-accent">Trauma Responses</div>
-  <div class="cards-grid">
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🌪</span> Flashback / Intrusion</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="flashback" data-val="0" onclick="setScale(this)">None</button>
-        <button class="scale-btn" data-field="flashback" data-val="1" onclick="setScale(this)">Mild</button>
-        <button class="scale-btn" data-field="flashback" data-val="2" onclick="setScale(this)">Mod</button>
-        <button class="scale-btn" data-field="flashback" data-val="3" onclick="setScale(this)">Severe</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🌫</span> Dissociation</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="dissociation" data-val="0" onclick="setScale(this)">None</button>
-        <button class="scale-btn" data-field="dissociation" data-val="1" onclick="setScale(this)">Mild</button>
-        <button class="scale-btn" data-field="dissociation" data-val="2" onclick="setScale(this)">Mod</button>
-        <button class="scale-btn" data-field="dissociation" data-val="3" onclick="setScale(this)">Severe</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">😱</span> Triggered Today</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="triggered" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="triggered" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">😴</span> Nightmares / Bad Dreams</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="nightmares" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="nightmares" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- EMOTIONAL REGULATION -->
-<div class="section-group cptsd-section">
-  <div class="section-title cptsd-accent">Emotional Regulation</div>
-  <div class="cards-grid">
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🌊</span> Emotional Dysregulation</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="emotDysreg" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="emotDysreg" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="emotDysreg" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="emotDysreg" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🪞</span> Shame / Self-Criticism</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="shame" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="shame" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="shame" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="shame" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🚪</span> Isolation Urge</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="isolationUrge" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="isolationUrge" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="isolationUrge" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="isolationUrge" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🫂</span> Connection / Felt Seen</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="connection" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="connection" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="connection" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="connection" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- BODY MEMORY -->
-<div class="section-group cptsd-section">
-  <div class="section-title cptsd-accent">Body & Somatic</div>
-  <div class="cards-grid">
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🫁</span> Body Tension</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="bodyTension" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="bodyTension" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="bodyTension" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="bodyTension" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">🌡</span> Somatic Symptoms</div>
-      <div class="multi-check">
-        <button class="check-btn" data-field="somaticSx" data-val="nausea" onclick="toggleCheck(this,'teal')">Nausea</button>
-        <button class="check-btn" data-field="somaticSx" data-val="headache" onclick="toggleCheck(this,'teal')">Headache</button>
-        <button class="check-btn" data-field="somaticSx" data-val="chest" onclick="toggleCheck(this,'teal')">Chest tight</button>
-        <button class="check-btn" data-field="somaticSx" data-val="fatigue" onclick="toggleCheck(this,'teal')">Fatigue</button>
-        <button class="check-btn" data-field="somaticSx" data-val="none" onclick="toggleCheck(this,'teal')">None</button>
-      </div>
-    </div>
-    <div class="field-card accent-teal">
-      <div class="field-label"><span class="icon">💭</span> Racing Thoughts / Overthinking</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="racingThoughts" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="racingThoughts" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="racingThoughts" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="racingThoughts" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CPTSD TRIGGERS NOTE -->
-<div class="section-group">
-  <div class="section-title cptsd-accent">Trigger Log</div>
-  <div class="notes-card">
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">What triggered you today? Context, people, situations.</div>
-    <textarea id="cptsdTriggerNote" placeholder="e.g. A loud noise triggered a stress response. I noticed tension in my shoulders during a phone call…" style="min-height:70px;"></textarea>
-  </div>
-</div>
-
-<div class="section-group">
-  <div class="section-title cptsd-accent">Coping & Resources Used</div>
-  <div class="notes-card">
-    <div class="multi-check" style="margin-bottom:10px;">
-      <button class="check-btn" data-field="copingUsed" data-val="breathing" onclick="toggleCheck(this,'teal')">Breathing</button>
-      <button class="check-btn" data-field="copingUsed" data-val="grounding" onclick="toggleCheck(this,'teal')">Grounding (5-4-3-2-1)</button>
-      <button class="check-btn" data-field="copingUsed" data-val="journaling" onclick="toggleCheck(this,'teal')">Journaling</button>
-      <button class="check-btn" data-field="copingUsed" data-val="therapy" onclick="toggleCheck(this,'teal')">Therapy</button>
-      <button class="check-btn" data-field="copingUsed" data-val="movement" onclick="toggleCheck(this,'teal')">Movement</button>
-      <button class="check-btn" data-field="copingUsed" data-val="selfCompassion" onclick="toggleCheck(this,'teal')">Self-compassion</button>
-      <button class="check-btn" data-field="copingUsed" data-val="reach_out" onclick="toggleCheck(this,'teal')">Reached out</button>
-      <button class="check-btn" data-field="copingUsed" data-val="rest" onclick="toggleCheck(this,'teal')">Rest / safety</button>
-    </div>
-    <textarea id="cptsdCopingNote" placeholder="Any notes on what helped or didn't help today…" style="min-height:50px;"></textarea>
-  </div>
-</div>
-
-<!-- HISTORY -->
-<div class="history-section">
-  <div class="history-header">
-    <div class="section-title" style="margin:0;">CPTSD History</div>
-    <button class="btn btn-secondary" onclick="exportCSV('cptsd')">⬇ Export CSV</button>
-  </div>
-  <div class="history-table-wrap">
-    <table id="historyTableCPTSD">
-      <thead>
-        <tr>
-          <th>Date</th><th>Safe</th><th>Hypervig.</th><th>Flashback</th><th>Dissoc.</th><th>Triggered</th><th>Nightmares</th><th>Shame</th><th>Coping</th>
-        </tr>
-      </thead>
-      <tbody id="historyBodyCPTSD"></tbody>
-    </table>
-  </div>
-</div>
-```
-
-  </div><!-- /panel-cptsd -->
-
-  <!-- ═══════════════ ADHD TAB ═══════════════ -->
-
-  <div class="tab-panel" id="panel-adhd">
-
-```
-<div class="date-bar">
-  <div>
-    <div class="date-display" id="dateLabelADHD">—</div>
-    <div style="font-size:11px;color:var(--indigo);margin-top:2px;">ADHD-specific tracking</div>
-  </div>
-  <div class="date-bar-right">
-    <button class="btn btn-secondary" onclick="exportCSV('adhd')">⬇ Export CSV</button>
-    <button class="btn" style="background:var(--indigo);color:#fff;" onclick="saveDay()">Save Day</button>
-  </div>
-</div>
-
-<!-- ATTENTION & FOCUS -->
-<div class="section-group adhd-section">
-  <div class="section-title adhd-accent">Attention & Focus</div>
-  <div class="cards-grid">
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🎯</span> Focus / Concentration</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="focus" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">very low</span></button>
-        <button class="scale-btn" data-field="focus" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="focus" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="focus" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">sharp</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🌀</span> Distractibility</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="distractibility" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="distractibility" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="distractibility" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="distractibility" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🔒</span> Hyperfocus Episode</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="hyperfocus" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="hyperfocus" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🧠</span> Brain Fog</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="brainFog" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="brainFog" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="brainFog" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="brainFog" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- EXECUTIVE FUNCTION -->
-<div class="section-group adhd-section">
-  <div class="section-title adhd-accent">Executive Function</div>
-  <div class="cards-grid">
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">📋</span> Task Initiation</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="taskInit" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">paralyzed</span></button>
-        <button class="scale-btn" data-field="taskInit" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="taskInit" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="taskInit" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">easy</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🗂</span> Task Completion</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="taskCompletion" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="taskCompletion" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="taskCompletion" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="taskCompletion" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">⏳</span> Time Blindness</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="timeBlindness" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="timeBlindness" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="timeBlindness" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="timeBlindness" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🧩</span> Working Memory</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="workingMemory" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="workingMemory" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="workingMemory" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="workingMemory" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🪜</span> Task Switching</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="taskSwitching" data-val="1" onclick="setScale(this)">1<br><span style="font-size:9px">very hard</span></button>
-        <button class="scale-btn" data-field="taskSwitching" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="taskSwitching" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="taskSwitching" data-val="4" onclick="setScale(this)">4<br><span style="font-size:9px">easy</span></button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">😬</span> Rejection Sensitivity (RSD)</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="rsd" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="rsd" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="rsd" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="rsd" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- IMPULSIVITY & HYPERACTIVITY -->
-<div class="section-group adhd-section">
-  <div class="section-title adhd-accent">Impulsivity & Activation</div>
-  <div class="cards-grid">
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">⚡</span> Hyperactivity / Restlessness</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="hyperactivity" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="hyperactivity" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="hyperactivity" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="hyperactivity" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🎲</span> Impulsivity</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="impulsivity" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="impulsivity" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="impulsivity" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="impulsivity" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🏔</span> ADHD Paralysis</div>
-      <div class="yn-toggle">
-        <button class="yn-btn" data-field="adhdParalysis" data-val="Y" onclick="setYN(this)">Yes</button>
-        <button class="yn-btn" data-field="adhdParalysis" data-val="N" onclick="setYN(this)">No</button>
-      </div>
-    </div>
-    <div class="field-card accent-indigo">
-      <div class="field-label"><span class="icon">🌊</span> Emotional Flooding</div>
-      <div class="scale-btns">
-        <button class="scale-btn" data-field="emotFlooding" data-val="1" onclick="setScale(this)">1</button>
-        <button class="scale-btn" data-field="emotFlooding" data-val="2" onclick="setScale(this)">2</button>
-        <button class="scale-btn" data-field="emotFlooding" data-val="3" onclick="setScale(this)">3</button>
-        <button class="scale-btn" data-field="emotFlooding" data-val="4" onclick="setScale(this)">4</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SUPPORTS -->
-<div class="section-group adhd-section">
-  <div class="section-title adhd-accent">Supports & Strategies Used</div>
-  <div class="notes-card">
-    <div class="multi-check" style="margin-bottom:10px;">
-      <button class="check-btn" data-field="adhdStrategies" data-val="timer" onclick="toggleCheck(this,'indigo')">Pomodoro/Timer</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="lists" onclick="toggleCheck(this,'indigo')">Task lists</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="bodyDouble" onclick="toggleCheck(this,'indigo')">Body doubling</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="music" onclick="toggleCheck(this,'indigo')">Focus music</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="movement" onclick="toggleCheck(this,'indigo')">Movement breaks</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="externalReminders" onclick="toggleCheck(this,'indigo')">External reminders</button>
-      <button class="check-btn" data-field="adhdStrategies" data-val="reduced_environment" onclick="toggleCheck(this,'indigo')">Low-stimulus env.</button>
-    </div>
-  </div>
-</div>
-
-<div class="section-group">
-  <div class="section-title adhd-accent">ADHD Notes</div>
-  <div class="notes-card">
-    <textarea id="adhdNotes" placeholder="What helped focus today? What tasks felt impossible? Any patterns you noticed…" style="min-height:80px;"></textarea>
-  </div>
-</div>
-
-<!-- HISTORY -->
-<div class="history-section">
-  <div class="history-header">
-    <div class="section-title" style="margin:0;">ADHD History</div>
-    <button class="btn btn-secondary" onclick="exportCSV('adhd')">⬇ Export CSV</button>
-  </div>
-  <div class="history-table-wrap">
-    <table id="historyTableADHD">
-      <thead>
-        <tr>
-          <th>Date</th><th>Focus</th><th>Distract.</th><th>Task Init</th><th>Completion</th><th>Time Blind.</th><th>RSD</th><th>Paralysis</th><th>Strategies</th>
-        </tr>
-      </thead>
-      <tbody id="historyBodyADHD"></tbody>
-    </table>
-  </div>
-</div>
-```
-
-  </div><!-- /panel-adhd -->
-
-</main>
-
-<!-- SAVE BAR -->
-
-<div class="save-bar">
-  <div class="save-bar-left">
-    <div class="save-status" id="saveStatus">No unsaved changes</div>
-  </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button class="btn btn-secondary" onclick="exportCSV('all')">⬇ Export All (CSV)</button>
-    <button class="btn btn-primary" onclick="saveDay()">💾 Save Day</button>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────
-let db = JSON.parse(localStorage.getItem('moodJournal_v1') || '{}');
-let currentDate = todayStr();
-let currentTab = 'general';
-let dirty = false;
-let medications = JSON.parse(localStorage.getItem('moodJournal_meds') || '[]'); // persistent med list
+// ═══════════ STATE ═══════════
+let db=JSON.parse(localStorage.getItem('mindflow_v1')||'{}');
+let medications=JSON.parse(localStorage.getItem('mindflow_meds')||'[]');
+let currentDate=todayStr();
+let histTab='general',chartTab='general',insightDays=14,histPeriod=90;
+let dirty=false,editMedId=null,confirmCallback=null;
+let chartInstances={};
 
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function fmtLabel(s){const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
+function fmtShort(s){const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+
+document.addEventListener('DOMContentLoaded',()=>{loadDay();renderMedList();});
+
+// ═══ PAGE NAV ═══
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.querySelector('.add-btn').style.display = id==='log' ? 'flex' : 'none';
+  if(id==='history')renderHistory();
+  if(id==='charts')renderCharts();
 }
-function formatDateLabel(str) {
-  const d = new Date(str + 'T12:00:00');
-  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+// ═══ LOG TAB ═══
+function setLogTab(tab,btn){
+  document.querySelectorAll('#page-log .period-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('log-general').style.display=tab==='general'?'block':'none';
+  document.getElementById('log-cptsd').style.display=tab==='cptsd'?'block':'none';
+  document.getElementById('log-adhd').style.display=tab==='adhd'?'block':'none';
 }
 
-// ─── INIT ─────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('mainDate').value = currentDate;
-  loadDay();
-  renderMedList();
-
-  // Tab click
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      currentTab = btn.dataset.tab;
-      document.getElementById('panel-' + currentTab).classList.add('active');
-    });
-  });
-});
-
-// ─── DATE NAVIGATION ─────────────────────────────────────
-function changeDay(delta) {
-  const d = new Date(currentDate + 'T12:00:00');
-  d.setDate(d.getDate() + delta);
-  currentDate = d.toISOString().split('T')[0];
-  document.getElementById('mainDate').value = currentDate;
-  loadDay();
-}
-function goToday() {
-  currentDate = todayStr();
-  document.getElementById('mainDate').value = currentDate;
+// ═══ DATE NAV ═══
+function changeDay(delta){
+  if(delta>0&&currentDate>=todayStr())return;
+  const d=new Date(currentDate+'T12:00:00');
+  d.setDate(d.getDate()+delta);
+  currentDate=d.toISOString().split('T')[0];
   loadDay();
 }
-function loadDay() {
-  currentDate = document.getElementById('mainDate').value || todayStr();
-  const label = formatDateLabel(currentDate);
-  document.getElementById('dateLabelGeneral').textContent = label;
-  document.getElementById('dateLabelCPTSD').textContent = label;
-  document.getElementById('dateLabelADHD').textContent = label;
-
-  const dayData = db[currentDate] || {};
-
-  // Reset all scale buttons
-  document.querySelectorAll('.scale-btn').forEach(b => b.className = 'scale-btn');
-  document.querySelectorAll('.yn-btn').forEach(b => b.className = 'yn-btn');
-  document.querySelectorAll('.check-btn').forEach(b => b.className = 'check-btn');
-
-  // Fill scale fields
-  Object.entries(dayData).forEach(([field, val]) => {
-    // scale buttons
-    document.querySelectorAll(`.scale-btn[data-field="${field}"]`).forEach(b => {
-      if (b.dataset.val == val) {
-        b.className = `scale-btn selected-${val}`;
-      }
-    });
-    // yn buttons
-    document.querySelectorAll(`.yn-btn[data-field="${field}"]`).forEach(b => {
-      if (b.dataset.val == val) b.className = `yn-btn selected-${val.toLowerCase()}`;
-    });
-    // multi-check (stored as comma string)
-    if (typeof val === 'string' && val.includes(',')) {
-      const vals = val.split(',');
-      document.querySelectorAll(`.check-btn[data-field="${field}"]`).forEach(b => {
-        if (vals.includes(b.dataset.val)) {
-          const color = b.closest('[class*="accent-teal"]') ? 'teal' : 'indigo';
-          b.className = `check-btn selected-${color}`;
-        }
-      });
-    } else {
-      document.querySelectorAll(`.check-btn[data-field="${field}"][data-val="${val}"]`).forEach(b => {
-        const color = 'teal';
-        b.className = `check-btn selected-${color}`;
-      });
-    }
-  });
-
-  // Numeric / text fields
-  const numFields = ['sleepHours','dailySteps','weight'];
-  numFields.forEach(f => {
-    const el = document.getElementById(f);
-    if (el) el.value = dayData[f] || '';
-  });
-  const timeFields = ['bedtime','wakeTime'];
-  timeFields.forEach(f => {
-    const el = document.getElementById(f);
-    if (el) el.value = dayData[f] || '';
-  });
-
-  // Notes
-  if (document.getElementById('generalNotes')) document.getElementById('generalNotes').value = dayData.generalNotes || '';
-  if (document.getElementById('cptsdTriggerNote')) document.getElementById('cptsdTriggerNote').value = dayData.cptsdTriggerNote || '';
-  if (document.getElementById('cptsdCopingNote')) document.getElementById('cptsdCopingNote').value = dayData.cptsdCopingNote || '';
-  if (document.getElementById('adhdNotes')) document.getElementById('adhdNotes').value = dayData.adhdNotes || '';
-
-  renderMedList();
-  renderHistory();
-  setDirty(false);
-}
-
-// ─── FIELD INTERACTIONS ──────────────────────────────────
-function setScale(btn) {
-  const field = btn.dataset.field;
-  document.querySelectorAll(`.scale-btn[data-field="${field}"]`).forEach(b => b.className = 'scale-btn');
-  btn.className = `scale-btn selected-${btn.dataset.val}`;
-  setDirty(true);
-}
-function setYN(btn) {
-  const field = btn.dataset.field;
-  document.querySelectorAll(`.yn-btn[data-field="${field}"]`).forEach(b => b.className = 'yn-btn');
-  btn.className = `yn-btn selected-${btn.dataset.val.toLowerCase()}`;
-  setDirty(true);
-}
-function toggleCheck(btn, color) {
-  const cls = `selected-${color}`;
-  if (btn.classList.contains(cls)) {
-    btn.className = 'check-btn';
-  } else {
-    btn.className = `check-btn ${cls}`;
-  }
-  setDirty(true);
-}
-function adjustNum(id, delta) {
-  const el = document.getElementById(id);
-  const cur = parseFloat(el.value) || 0;
-  const step = parseFloat(el.step) || 1;
-  el.value = Math.max(0, Math.round((cur + delta) * 10) / 10);
-  setDirty(true);
-}
-
-// ─── SAVE ─────────────────────────────────────────────────
-function saveDay() {
-  const data = db[currentDate] || {};
-
-  // Scale buttons
-  document.querySelectorAll('.scale-btn[class*="selected"]').forEach(b => {
-    if (b.dataset.field) data[b.dataset.field] = b.dataset.val;
-  });
-  // YN buttons
-  document.querySelectorAll('.yn-btn[class*="selected"]').forEach(b => {
-    if (b.dataset.field) data[b.dataset.field] = b.dataset.val;
-  });
-  // Multi-check
-  const checkFields = {};
-  document.querySelectorAll('.check-btn[class*="selected"]').forEach(b => {
-    if (b.dataset.field) {
-      if (!checkFields[b.dataset.field]) checkFields[b.dataset.field] = [];
-      checkFields[b.dataset.field].push(b.dataset.val);
-    }
-  });
-  Object.entries(checkFields).forEach(([f, vals]) => { data[f] = vals.join(','); });
-
-  // Numeric
-  ['sleepHours','dailySteps','weight'].forEach(f => {
-    const el = document.getElementById(f);
-    if (el && el.value !== '') data[f] = el.value;
-  });
-  ['bedtime','wakeTime'].forEach(f => {
-    const el = document.getElementById(f);
-    if (el && el.value) data[f] = el.value;
-  });
-
-  // Notes
-  ['generalNotes','cptsdTriggerNote','cptsdCopingNote','adhdNotes'].forEach(f => {
-    const el = document.getElementById(f);
-    if (el) data[f] = el.value;
-  });
-
-  data._savedAt = new Date().toISOString();
-  db[currentDate] = data;
-  localStorage.setItem('moodJournal_v1', JSON.stringify(db));
-  setDirty(false);
-  renderHistory();
-  showFlash('Day saved ✓');
-}
-
-// ─── DIRTY STATE ─────────────────────────────────────────
-function setDirty(val) {
-  dirty = val;
-  const el = document.getElementById('saveStatus');
-  if (val) {
-    el.textContent = 'Unsaved changes';
-    el.className = 'save-status';
-  } else {
-    el.textContent = 'All changes saved';
-    el.className = 'save-status saved';
+function updateDateLabel(){
+  const isToday=currentDate===todayStr();
+  document.getElementById('log-date-label').textContent=fmtLabel(currentDate);
+  document.getElementById('log-today-badge').style.display=isToday?'block':'none';
+  // Disable next-day arrow if we're at today
+  const nextBtn=document.getElementById('btn-next-day');
+  if(nextBtn){
+    if(currentDate>=todayStr())nextBtn.classList.add('disabled');
+    else nextBtn.classList.remove('disabled');
   }
 }
-document.addEventListener('input', () => setDirty(true));
 
-// ─── MEDICATIONS ─────────────────────────────────────────
-function addMedication() {
-  const name = document.getElementById('newMedName').value.trim();
-  const dose = document.getElementById('newMedDose').value.trim();
-  if (!name) return;
-  medications.push({ name, dose, id: Date.now() });
-  localStorage.setItem('moodJournal_meds', JSON.stringify(medications));
-  document.getElementById('newMedName').value = '';
-  document.getElementById('newMedDose').value = '';
+// ═══ LOAD DAY ═══
+function loadDay(){
+  updateDateLabel();
+  const r=db[currentDate]||{};
+  document.querySelectorAll('.scale-pill').forEach(b=>b.className='scale-pill');
+  document.querySelectorAll('.pill').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.ios-toggle input').forEach(cb=>cb.checked=false);
+
+  const scaleFields=['sleepQuality','depressedMood','elevatedMood','irritability','anxiety','overallOutlook',
+    'loneliness','productivity','motivation','nutrition','appetite','alcohol','caffeine','socialMedia','newsMedia',
+    'feltSafe','emotDysreg','shame','isolationUrge','racingThoughts','bodyTension',
+    'focus','distractibility','brainFog','hyperactivity','taskInit','taskCompletion','timeBlindness','workingMemory','rsd','verbalExpr','adhdEmotDysreg','overstimulation'];
+  scaleFields.forEach(f=>{
+    const v=r[f];
+    if(v!=null){const btn=document.querySelector(`.scale-pill[data-f="${f}"][data-v="${v}"]`);if(btn)btn.className=`scale-pill sel-${v}`;}
+  });
+
+  const boolFields=['restfulSleep','insomnia','chores','hygiene','outsideTime','exercise','socialTime','meditation',
+    'physicalPain','talkTherapy','menstruation','hyperfocus','adhdParalysis','adhdSleepRacing',
+    'hypervigilance','flashbacks','dissociation','cognitiveFog','triggered','nightmares','cptsdInsomnia','panicAttacks','selfDestructive'];
+  boolFields.forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.checked=!!r[f];});
+
+  const multiFields=['nsState','somaticSx','copingUsed','adhdSx','sensoryCh','adhdStrategies'];
+  multiFields.forEach(f=>{
+    const vals=(r[f]||'').split(',').filter(Boolean);
+    vals.forEach(v=>{const btn=document.querySelector(`.pill[data-f="${f}"][data-v="${v}"]`);if(btn)btn.classList.add('sel');});
+  });
+
+  const numFields=['sleepHours','weight'];
+  numFields.forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=r[f]!=null?r[f]:'';});
+
+  ['generalNotes','cptsdTrigger','adhdNotes'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=r[f]||'';});
+
   renderMedList();
+  dirty=false;
 }
-function removeMed(id) {
-  medications = medications.filter(m => m.id !== id);
-  localStorage.setItem('moodJournal_meds', JSON.stringify(medications));
-  renderMedList();
+
+// ═══ FIELD INTERACTIONS ═══
+function setScale(btn){
+  const f=btn.dataset.f,v=btn.dataset.v;
+  // Tap same value = deselect (toggle off)
+  const already=btn.classList.contains('sel-'+v);
+  document.querySelectorAll(`.scale-pill[data-f="${f}"]`).forEach(b=>b.className='scale-pill');
+  if(!already)btn.className=`scale-pill sel-${v}`;
+  markDirty();
 }
-function renderMedList() {
-  const list = document.getElementById('medList');
-  const dayData = db[currentDate] || {};
-  list.innerHTML = medications.map(m => {
-    const takenKey = `med_${m.id}`;
-    const taken = dayData[takenKey] || '';
-    return `<div class="med-row">
-      <div class="med-name">${m.name}</div>
-      <div class="med-dose">${m.dose}</div>
-      <div class="med-taken yn-toggle">
-        <button class="yn-btn ${taken==='Y'?'selected-y':''}" onclick="setMedTaken(${m.id},'Y')">Taken</button>
-        <button class="yn-btn ${taken==='N'?'selected-n':''}" onclick="setMedTaken(${m.id},'N')">Skipped</button>
+function togglePill(btn){btn.classList.toggle('sel');markDirty();}
+function adj(id,delta){
+  const el=document.getElementById('f-'+id);
+  const v=parseFloat(el.value)||0;
+  el.value=Math.max(0,Math.round((v+delta)*10)/10);
+  markDirty();
+}
+function markDirty(){dirty=true;}
+
+// ═══ SAVE (with confirm) ═══
+function confirmSaveDay(){
+  showConfirm('Save entry?','Save your entry for '+fmtLabel(currentDate)+'?',()=>{saveDay();},'Save','var(--pri)','Cancel');
+}
+function saveDay(){
+  const data=db[currentDate]||{};
+  document.querySelectorAll('.scale-pill[class*="sel-"]').forEach(b=>{if(b.dataset.f)data[b.dataset.f]=b.dataset.v;});
+  document.querySelectorAll('.ios-toggle input').forEach(cb=>{if(cb.id&&cb.id.startsWith('f-')){const f=cb.id.slice(2);data[f]=cb.checked;}});
+  const multiFields=['nsState','somaticSx','copingUsed','adhdSx','sensoryCh','adhdStrategies'];
+  multiFields.forEach(f=>{
+    const sel=[...document.querySelectorAll(`.pill.sel[data-f="${f}"]`)].map(b=>b.dataset.v);
+    data[f]=sel.join(',');
+  });
+  ['sleepHours','weight'].forEach(f=>{const el=document.getElementById('f-'+f);if(el&&el.value!=='')data[f]=parseFloat(el.value);else delete data[f];});
+  ['generalNotes','cptsdTrigger','adhdNotes'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)data[f]=el.value;});
+  data._savedAt=new Date().toISOString();
+  db[currentDate]=data;
+  save();
+  dirty=false;
+  flash('Entry saved ✓');
+}
+function save(){localStorage.setItem('mindflow_v1',JSON.stringify(db));}
+
+// ═══ MEDICATIONS ═══
+function renderMedList(){
+  const block=document.getElementById('med-list-block');
+  const dayData=db[currentDate]||{};
+  if(!medications.length){block.innerHTML='<div style="padding:14px 0!important;text-align:center!important;color:var(--text3)!important;font-size:13px!important;">No medications yet</div>';return;}
+  block.innerHTML=medications.map(m=>{
+    const taken=dayData['med_'+m.id]===true;
+    return `<div class="med-item">
+      <div class="med-info"><div class="med-name">${m.name}</div><div class="med-dose">${m.dose}${m.note?' · '+m.note:''}</div></div>
+      <div class="med-actions">
+        <label class="ios-toggle"><input type="checkbox" ${taken?'checked':''} onchange="setMedTaken(${m.id},this.checked)"><span class="ios-toggle-track"></span></label>
+        <button class="med-edit-btn" onclick="openMedModal(${m.id})">Edit</button>
       </div>
-      <button class="med-remove" onclick="removeMed(${m.id})" title="Remove">×</button>
     </div>`;
   }).join('');
 }
-function setMedTaken(id, val) {
-  if (!db[currentDate]) db[currentDate] = {};
-  db[currentDate][`med_${id}`] = val;
-  localStorage.setItem('moodJournal_v1', JSON.stringify(db));
-  renderMedList();
-  setDirty(true);
+function setMedTaken(id,val){if(!db[currentDate])db[currentDate]={};db[currentDate]['med_'+id]=val;save();}
+function openMedModal(id){
+  editMedId=id;
+  const med=id?medications.find(m=>m.id===id):null;
+  document.getElementById('med-modal-title').textContent=id?'Edit medication':'Add medication';
+  document.getElementById('med-inp-name').value=med?med.name:'';
+  document.getElementById('med-inp-dose').value=med?med.dose:'';
+  document.getElementById('med-inp-note').value=med?med.note:'';
+  document.getElementById('med-del-btn').style.display=id?'block!important':'none!important';
+  document.getElementById('med-modal').style.display='flex';
 }
-
-// ─── HISTORY TABLE ───────────────────────────────────────
-function renderHistory() {
-  const dates = Object.keys(db).sort((a,b) => b.localeCompare(a)).slice(0,30);
-  renderGenHistory(dates);
-  renderCPTSDHistory(dates);
-  renderADHDHistory(dates);
+function closeMedModal(){document.getElementById('med-modal').style.display='none';editMedId=null;}
+function saveMedModal(){
+  const name=document.getElementById('med-inp-name').value.trim();
+  const dose=document.getElementById('med-inp-dose').value.trim();
+  const note=document.getElementById('med-inp-note').value.trim();
+  if(!name){alert('Please enter a medication name.');return;}
+  if(editMedId){const m=medications.find(m=>m.id===editMedId);if(m){m.name=name;m.dose=dose;m.note=note;}}
+  else{medications.push({id:Date.now(),name,dose,note});}
+  localStorage.setItem('mindflow_meds',JSON.stringify(medications));
+  closeMedModal();renderMedList();flash(editMedId?'Medication updated':'Medication added');
 }
-
-function badge(val, isYN=false) {
-  if (isYN) {
-    return val === 'Y'
-      ? `<span class="badge badge-y">Yes</span>`
-      : (val === 'N' ? `<span class="badge badge-n">No</span>` : '—');
-  }
-  if (!val && val !== 0) return '—';
-  return `<span class="badge badge-${val}">${val}</span>`;
-}
-function shortDate(str) {
-  const d = new Date(str + 'T12:00:00');
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-}
-
-function renderGenHistory(dates) {
-  const tbody = document.getElementById('historyBodyGeneral');
-  tbody.innerHTML = dates.map(d => {
-    const r = db[d];
-    return `<tr>
-      <td><b>${shortDate(d)}</b></td>
-      <td>${r.sleepHours ? r.sleepHours+'h' : '—'}</td>
-      <td>${badge(r.depressedMood)}</td>
-      <td>${badge(r.elevatedMood)}</td>
-      <td>${badge(r.irritability)}</td>
-      <td>${badge(r.anxiety)}</td>
-      <td>${badge(r.productivity)}</td>
-      <td>${badge(r.motivation)}</td>
-      <td>${badge(r.exercise, true)}</td>
-      <td>${badge(r.talkTherapy, true)}</td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">${r.generalNotes ? r.generalNotes.slice(0,50)+(r.generalNotes.length>50?'…':'') : ''}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderCPTSDHistory(dates) {
-  const tbody = document.getElementById('historyBodyCPTSD');
-  tbody.innerHTML = dates.map(d => {
-    const r = db[d];
-    return `<tr>
-      <td><b>${shortDate(d)}</b></td>
-      <td>${badge(r.feltSafe)}</td>
-      <td>${badge(r.hypervigilance)}</td>
-      <td>${badge(r.flashback)}</td>
-      <td>${badge(r.dissociation)}</td>
-      <td>${badge(r.triggered, true)}</td>
-      <td>${badge(r.nightmares, true)}</td>
-      <td>${badge(r.shame)}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${r.copingUsed ? r.copingUsed.replace(/,/g,', ').slice(0,40) : '—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderADHDHistory(dates) {
-  const tbody = document.getElementById('historyBodyADHD');
-  tbody.innerHTML = dates.map(d => {
-    const r = db[d];
-    return `<tr>
-      <td><b>${shortDate(d)}</b></td>
-      <td>${badge(r.focus)}</td>
-      <td>${badge(r.distractibility)}</td>
-      <td>${badge(r.taskInit)}</td>
-      <td>${badge(r.taskCompletion)}</td>
-      <td>${badge(r.timeBlindness)}</td>
-      <td>${badge(r.rsd)}</td>
-      <td>${badge(r.adhdParalysis, true)}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${r.adhdStrategies ? r.adhdStrategies.replace(/,/g,', ').slice(0,40) : '—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ─── EXPORT CSV ──────────────────────────────────────────
-function exportCSV(mode) {
-  const dates = Object.keys(db).sort();
-
-  let fields = [];
-  if (mode === 'general' || mode === 'all') {
-    fields = fields.concat(['sleepHours','bedtime','wakeTime','restfulSleep','sleepQuality',
-      'depressedMood','elevatedMood','irritability','anxiety','overallOutlook','loneliness',
-      'productivity','motivation','chores','hygiene','nutrition','outsideTime','exercise',
-      'dailySteps','socialTime','meditation','alcohol','caffeine',
-      'talkTherapy','socialMedia','newsMedia','weight','menstruation','physicalPain','generalNotes']);
-    medications.forEach(m => fields.push(`med_${m.id}`));
-  }
-  if (mode === 'cptsd' || mode === 'all') {
-    fields = fields.concat(['feltSafe','hypervigilance','nsState','groundingPracticed',
-      'flashback','dissociation','triggered','nightmares',
-      'emotDysreg','shame','isolationUrge','connection',
-      'bodyTension','somaticSx','racingThoughts','copingUsed','cptsdTriggerNote','cptsdCopingNote']);
-  }
-  if (mode === 'adhd' || mode === 'all') {
-    fields = fields.concat(['focus','distractibility','hyperfocus','brainFog',
-      'taskInit','taskCompletion','timeBlindness','workingMemory','taskSwitching','rsd',
-      'hyperactivity','impulsivity','adhdParalysis','emotFlooding','adhdStrategies','adhdNotes']);
-  }
-  // deduplicate
-  fields = [...new Set(fields)];
-
-  // Make header human-readable
-  const headerMap = {
-    sleepHours:'Sleep (hrs)', bedtime:'Bedtime', wakeTime:'Wake Time', restfulSleep:'Restful Sleep', sleepQuality:'Sleep Quality',
-    depressedMood:'Depressed Mood', elevatedMood:'Elevated Mood', irritability:'Irritability', anxiety:'Anxiety',
-    overallOutlook:'Overall Outlook', loneliness:'Loneliness', productivity:'Productivity', motivation:'Motivation',
-    chores:'Chores', hygiene:'Hygiene', nutrition:'Nutrition', outsideTime:'Outside Time', exercise:'Exercise',
-    dailySteps:'Daily Steps', socialTime:'Social Time', meditation:'Meditation', alcohol:'Alcohol', caffeine:'Caffeine',
-    talkTherapy:'Talk Therapy', socialMedia:'Social Media', newsMedia:'News/Media', weight:'Weight (kg)',
-    menstruation:'Menstruation', physicalPain:'Physical Pain', generalNotes:'General Notes',
-    feltSafe:'Felt Safe', hypervigilance:'Hypervigilance', nsState:'NS State', groundingPracticed:'Grounding',
-    flashback:'Flashback', dissociation:'Dissociation', triggered:'Triggered', nightmares:'Nightmares',
-    emotDysreg:'Emot. Dysreg', shame:'Shame', isolationUrge:'Isolation Urge', connection:'Connection',
-    bodyTension:'Body Tension', somaticSx:'Somatic Sx', racingThoughts:'Racing Thoughts',
-    copingUsed:'Coping Used', cptsdTriggerNote:'Trigger Notes', cptsdCopingNote:'Coping Notes',
-    focus:'Focus', distractibility:'Distractibility', hyperfocus:'Hyperfocus', brainFog:'Brain Fog',
-    taskInit:'Task Init', taskCompletion:'Task Completion', timeBlindness:'Time Blindness',
-    workingMemory:'Working Memory', taskSwitching:'Task Switching', rsd:'RSD',
-    hyperactivity:'Hyperactivity', impulsivity:'Impulsivity', adhdParalysis:'ADHD Paralysis',
-    emotFlooding:'Emot. Flooding', adhdStrategies:'ADHD Strategies', adhdNotes:'ADHD Notes',
-  };
-  medications.forEach(m => { headerMap[`med_${m.id}`] = `Med: ${m.name} ${m.dose}`; });
-
-  const header = ['Date', ...fields.map(f => headerMap[f] || f)];
-  const rows = dates.map(d => {
-    const r = db[d] || {};
-    return [d, ...fields.map(f => {
-      const v = r[f] ?? '';
-      return `"${String(v).replace(/"/g,'""')}"`;
-    })].join(',');
+function deleteMedFromModal(){
+  showConfirm('Remove medication?','Remove "'+medications.find(m=>m.id===editMedId)?.name+'" from your list?',()=>{
+    medications=medications.filter(m=>m.id!==editMedId);
+    localStorage.setItem('mindflow_meds',JSON.stringify(medications));
+    closeMedModal();renderMedList();flash('Medication removed');
   });
-
-  const csv = [header.join(','), ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `mood-journal-${mode}-${todayStr()}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showFlash('CSV exported ✓');
 }
 
-// ─── FLASH NOTIFICATION ──────────────────────────────────
-function showFlash(msg) {
-  const el = document.getElementById('flash');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2200);
+// ═══ HISTORY (shows full entry detail on tap) ═══
+function setHistTab(tab,btn){histTab=tab;document.querySelectorAll('#page-history .page-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderHistory();}
+function setHistPeriod(days,btn){histPeriod=days;document.querySelectorAll('#page-history .insight-period-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderHistory();}
+function renderHistory(){
+  const allDates=Object.keys(db).filter(k=>!k.startsWith('_')&&db[k]&&typeof db[k]==='object').sort((a,b)=>b.localeCompare(a));
+  const dates=allDates.slice(0, histPeriod === 365 ? allDates.length : histPeriod);
+  const list=document.getElementById('history-list');
+  if(!dates.length){list.innerHTML='<div class="empty-state">No entries yet. Start logging to see your history here.</div>';return;}
+  list.innerHTML=dates.map(d=>{
+    const r=db[d]||{};let chips='';
+    if(histTab==='general'){
+      if(r.depressedMood)chips+=chipB('Dep '+r.depressedMood,r.depressedMood);
+      if(r.irritability)chips+=chipB('Irrit '+r.irritability,r.irritability);
+      if(r.anxiety)chips+=chipB('Anx '+r.anxiety,r.anxiety);
+      if(r.sleepHours)chips+=`<span class="hist-chip" style="background:var(--pri-bg)!important;color:var(--pri)!important;">${r.sleepHours}h</span>`;
+      if(r.talkTherapy)chips+=`<span class="hist-chip chip-y">Therapy</span>`;
+      if(r.exercise)chips+=`<span class="hist-chip chip-y">Exercise</span>`;
+    }else if(histTab==='cptsd'){
+      if(r.flashbacks)chips+=`<span class="hist-chip chip-sev">Flashback</span>`;
+      if(r.dissociation)chips+=`<span class="hist-chip chip-mod">Dissociation</span>`;
+      if(r.nightmares)chips+=`<span class="hist-chip chip-mod">Nightmares</span>`;
+      if(r.panicAttacks)chips+=`<span class="hist-chip chip-sev">Panic</span>`;
+      if(r.triggered)chips+=`<span class="hist-chip chip-sev">Triggered</span>`;
+      if(r.feltSafe)chips+=chipB('Safe '+r.feltSafe,5-parseInt(r.feltSafe));
+      if(r.cognitiveFog)chips+=`<span class="hist-chip chip-mild">Cog. Fog</span>`;
+    }else{
+      if(r.focus)chips+=chipB('Focus '+r.focus,5-parseInt(r.focus));
+      if(r.adhdParalysis)chips+=`<span class="hist-chip chip-sev">Paralysis</span>`;
+      if(r.hyperfocus)chips+=`<span class="hist-chip chip-mild">Hyperfocus</span>`;
+      if(r.overstimulation)chips+=chipB('Stim '+r.overstimulation,parseInt(r.overstimulation));
+      if(r.adhdSleepRacing)chips+=`<span class="hist-chip chip-mod">Racing mind</span>`;
+    }
+    return `<div class="hist-item" onclick="openHistDetail('${d}')">
+      <div class="hist-date">${fmtShort(d)}</div>
+      <div class="hist-chips">${chips||'<span style="font-size:11px;color:var(--text3);">—</span>'}</div>
+      <div class="hist-actions">
+        <button class="hist-edit-btn" onclick="event.stopPropagation(); editHistEntry('${d}')">✏️</button>
+        <button class="hist-del-btn" onclick="event.stopPropagation(); confirmDeleteHist('${d}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
 }
+function chipB(label,v){
+  const cls=parseInt(v)<=1?'chip-ok':parseInt(v)==2?'chip-mild':parseInt(v)==3?'chip-mod':'chip-sev';
+  return `<span class="hist-chip ${cls}">${label}</span>`;
+}
+// Opens detail view (doesn't navigate away from history tab)
+function openHistDetail(d){
+  const r=db[d]||{};
+  document.getElementById('hist-detail-date').textContent=fmtLabel(d);
+  const LABELS={sleepHours:'Sleep (hrs)',restfulSleep:'Restful sleep',insomnia:'Insomnia',sleepQuality:'Sleep quality',depressedMood:'Depressed Mood',elevatedMood:'Elevated Mood',irritability:'Irritability',anxiety:'Anxiety',overallOutlook:'Overall Outlook',loneliness:'Loneliness',productivity:'Productivity',motivation:'Motivation',chores:'Chores',hygiene:'Hygiene',nutrition:'Nutrition',appetite:'Appetite',outsideTime:'Outside',exercise:'Exercise',socialTime:'Social time',meditation:'Meditation',physicalPain:'Physical pain',alcohol:'Alcohol',caffeine:'Caffeine',talkTherapy:'Talk therapy',socialMedia:'Social media',newsMedia:'News media',weight:'Weight',menstruation:'Menstruation',feltSafe:'Felt safe',hypervigilance:'Hypervigilance',nsState:'NS State',flashbacks:'Flashbacks',dissociation:'Dissociation',cognitiveFog:'Cognitive fog',triggered:'Triggered',nightmares:'Nightmares',cptsdInsomnia:'Insomnia (CPTSD)',panicAttacks:'Panic attacks',selfDestructive:'Self-destruct.',emotDysreg:'Emot. Dysreg',shame:'Shame',isolationUrge:'Isolation urge',racingThoughts:'Racing thoughts',bodyTension:'Body tension',somaticSx:'Somatic sx',copingUsed:'Coping',cptsdTrigger:'Trigger notes',focus:'Focus',distractibility:'Distractibility',brainFog:'Brain fog',hyperactivity:'Hyperactivity',hyperfocus:'Hyperfocus',adhdParalysis:'ADHD Paralysis',adhdEmotDysreg:'Emot. Dysreg',taskInit:'Task init',taskCompletion:'Task completion',timeBlindness:'Time blindness',workingMemory:'Working memory',rsd:'RSD',verbalExpr:'Verbal expression',overstimulation:'Overstimulation',sensoryCh:'Sensory channels',adhdSx:'ADHD symptoms',adhdStrategies:'Strategies',adhdNotes:'ADHD notes',adhdSleepRacing:'Racing mind (sleep)',generalNotes:'Notes'};
+  const sections=[
+    {title:'General',keys:['sleepHours','restfulSleep','insomnia','sleepQuality','depressedMood','elevatedMood','irritability','anxiety','overallOutlook','loneliness','productivity','motivation','chores','hygiene','nutrition','appetite','outsideTime','exercise','socialTime','meditation','physicalPain','alcohol','caffeine','talkTherapy','socialMedia','newsMedia','weight','menstruation']},
+    {title:'CPTSD',keys:['feltSafe','hypervigilance','nsState','flashbacks','dissociation','cognitiveFog','triggered','nightmares','cptsdInsomnia','panicAttacks','selfDestructive','emotDysreg','shame','isolationUrge','racingThoughts','bodyTension','somaticSx','copingUsed','cptsdTrigger']},
+    {title:'ADHD',keys:['focus','distractibility','brainFog','hyperactivity','hyperfocus','adhdParalysis','adhdEmotDysreg','taskInit','taskCompletion','timeBlindness','workingMemory','rsd','verbalExpr','overstimulation','sensoryCh','adhdSx','adhdStrategies','adhdSleepRacing','adhdNotes']},
+    {title:'Medications',keys:medications.map(m=>'med_'+m.id)},
+    {title:'Notes',keys:['generalNotes']}
+  ];
+  let html='';
+  sections.forEach(sec=>{
+    const rows=sec.keys.filter(k=>{
+      if(k.startsWith('med_')){const m=medications.find(m=>'med_'+m.id===k);return m&&r[k]!==undefined;}
+      return r[k]!==undefined&&r[k]!==''&&r[k]!==false&&r[k]!==null;
+    });
+    if(!rows.length)return;
+    html+=`<div class="detail-section"><div class="detail-section-title">${sec.title}</div>`;
+    rows.forEach(k=>{
+      let label=LABELS[k]||k;
+      let val=r[k];
+      if(k.startsWith('med_')){const m=medications.find(m=>'med_'+m.id===k);label=m?m.name+' ('+m.dose+')':'Med';val=val?'✓ Taken':'Skipped';}
+      else if(typeof val==='boolean')val=val?'Yes':'No';
+      else if(typeof val==='string'&&val.includes(','))val=val.split(',').join(', ');
+      html+=`<div class="detail-row"><span class="detail-key">${label}</span><span class="detail-val">${val}</span></div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('hist-detail-body').innerHTML=html||'<div class="empty-state">No data recorded for this day.</div>';
+  document.getElementById('hist-detail-modal').style.display='flex';
+}
+function closeHistDetail(){document.getElementById('hist-detail-modal').style.display='none';}
+// Edit and Delete for history
+let editingDate=null;
+function editHistEntry(d){
+  editingDate=d;
+  // For now, just alert
+  alert('Edit functionality coming soon. Date: '+d);
+}
+function confirmDeleteHist(d){
+  document.getElementById('confirm-title').textContent='Delete Entry';
+  document.getElementById('confirm-msg').textContent=`Are you sure you want to delete the entry for ${fmtLabel(d)}? This action cannot be undone.`;
+  document.getElementById('confirm-ok').onclick=()=>deleteHistEntry(d);
+  document.getElementById('confirm-overlay').style.display='flex';
+}
+function deleteHistEntry(d){
+  delete db[d];
+  saveDB();
+  renderHistory();
+  document.getElementById('confirm-overlay').style.display='none';
+}
+
+// ═══ INSIGHTS ═══
+function setInsightPeriod(days,btn){
+  insightDays=days;
+  document.querySelectorAll('.insight-period-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderCharts();
+}
+function setChartTab(tab,btn){
+  chartTab=tab;
+  document.querySelectorAll('#page-charts .page-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('charts-general').style.display=tab==='general'?'block':'none';
+  document.getElementById('charts-cptsd').style.display=tab==='cptsd'?'block':'none';
+  document.getElementById('charts-adhd').style.display=tab==='adhd'?'block':'none';
+  renderCharts();
+}
+function getDates(n){
+  const dates=[];const t=new Date();
+  for(let i=n-1;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);dates.push(d.toISOString().split('T')[0]);}
+  return dates;
+}
+function avg(arr){const v=arr.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
+
+const chartColors={pri:'#4a7c59',amber:'#b45309',red:'#dc2626',teal:'#0f766e',indigo:'#5b5fc7',brown:'#7c4a1e',green:'#16a34a'};
+function baseOpts(min,max){return{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'-apple-system,Helvetica Neue,sans-serif',size:11},color:'#3a5c42',boxWidth:12,padding:10}}},scales:{x:{ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}},y:{min,max,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}}}};}
+
+function renderCharts(){
+  renderStatusBanner();
+  renderMetricCards();
+  if(chartTab==='general')renderGeneralCharts();
+  else if(chartTab==='cptsd')renderCPTSDCharts();
+  else renderADHDCharts();
+}
+
+function renderStatusBanner(){
+  const dates=getDates(7);
+  const r=db[todayStr()]||{};
+  let score=0,flags=[];
+  // Calculate wellbeing score from recent days
+  dates.forEach(d=>{
+    const rd=db[d]||{};
+    if(rd.depressedMood>=3)score++;if(rd.anxiety>=3)score++;if(rd.sleepHours<6)score++;
+    if(rd.nutrition<=2)score++;if(!rd.exercise&&!rd.outsideTime)score++;
+  });
+  const cptsdActive=r.flashbacks||r.panicAttacks||r.dissociation||r.triggered;
+  const wrap=document.getElementById('status-banner-wrap');
+  let banner='',status='';
+  if(chartTab==='general'){
+    if(score>=10){banner='alert';status='🌧 Rest Needed';flags.push('Patterns in the last 7 days suggest low mood, poor sleep, or high stress. Consider slowing down.');}
+    else if(score>=5){banner='warn';status='⚠️ Watch Your Wellbeing';flags.push('Some strain over the last week. Check in with yourself and prioritise rest.');}
+    else{banner='ok';status='🌱 Doing Well';flags.push('Your recent days show stable mood and lifestyle patterns.');}
+  }else if(chartTab==='cptsd'){
+    if(cptsdActive){banner='alert';status='🌊 Survival Mode';flags.push('Active trauma symptoms today. Be gentle with yourself — you are coping.');}
+    else if((r.emotDysreg||0)>=3||(r.shame||0)>=3){banner='warn';status='⚡ Heightened State';flags.push('Elevated emotional dysregulation or shame noted. Grounding may help.');}
+    else{banner='ok';status='🛡 Relatively Stable';flags.push('No acute trauma responses logged today.');}
+  }else{
+    if(r.adhdParalysis||(r.focus||0)<=2){banner='warn';status='🔋 Low Executive Function';flags.push('ADHD paralysis or low focus today. Small steps and external anchors can help.');}
+    else if((r.overstimulation||0)>=3){banner='warn';status='🌪 Sensory Overload';flags.push('High overstimulation today. Reduce stimuli if possible.');}
+    else{banner='ok';status='⚡ Functioning Well';flags.push('Executive function and attention look manageable today.');}
+  }
+  wrap.innerHTML=`<div class="status-banner ${banner}"><span class="status-icon">${banner==='ok'?'🌿':banner==='warn'?'🍂':'🌧'}</span><div><div class="status-title">${status}</div><div class="status-sub">${flags[0]}</div></div></div>`;
+}
+
+function renderMetricCards(){
+  const dates=getDates(insightDays);
+  const wrap=document.getElementById('insight-cards');
+  let html='';
+  if(chartTab==='general'){
+    const sleepVals=dates.map(d=>(db[d]||{}).sleepHours).filter(v=>v!=null);
+    const avgSleep=sleepVals.length?avg(sleepVals).toFixed(1):'—';
+    const moodVals=dates.map(d=>(db[d]||{}).overallOutlook).filter(v=>v!=null).map(Number);
+    const avgMood=moodVals.length?avg(moodVals).toFixed(1):'—';
+    const nutritionVals=dates.map(d=>(db[d]||{}).nutrition).filter(v=>v!=null).map(Number);
+    const avgNutrition=nutritionVals.length?avg(nutritionVals).toFixed(1):'—';
+    const prodVals=dates.map(d=>(db[d]||{}).productivity).filter(v=>v!=null).map(Number);
+    const motivVals=dates.map(d=>(db[d]||{}).motivation).filter(v=>v!=null).map(Number);
+    const combinedVals=[...prodVals,...motivVals];
+    const avgProdMotiv=combinedVals.length?avg(combinedVals).toFixed(1):'—';
+    html+=card('Avg Sleep',avgSleep,'hrs','small-warm')+card('Avg Outlook',avgMood,'/4','small-warm')+card('Nutrition Score',avgNutrition,'/4','amber-card')+card('Avg Prod & Motiv',avgProdMotiv,'/4','amber-card');
+  }else if(chartTab==='cptsd'){
+    const safeDays=dates.filter(d=>{const v=(db[d]||{}).feltSafe;return v&&parseInt(v)>=3;}).length;
+    const flashDays=dates.filter(d=>(db[d]||{}).flashbacks).length;
+    const panicDays=dates.filter(d=>(db[d]||{}).panicAttacks).length;
+    const dysregVals=dates.map(d=>(db[d]||{}).emotDysreg).filter(v=>v!=null).map(Number);
+    const avgDysreg=dysregVals.length?avg(dysregVals).toFixed(1):'—';
+    html+=card('Felt Safe',safeDays,'days','small-warm')+card('Flashbacks',flashDays,'days','amber-card')+card('Panic',panicDays,'days','amber-card')+card('Avg Dysreg.',avgDysreg,'/4','small-warm');
+  }else{
+    const focusVals=dates.map(d=>(db[d]||{}).focus).filter(v=>v!=null).map(Number);
+    const avgFocus=focusVals.length?avg(focusVals).toFixed(1):'—';
+    const paralDays=dates.filter(d=>(db[d]||{}).adhdParalysis).length;
+    const stimDays=dates.filter(d=>{const v=(db[d]||{}).overstimulation;return v&&parseInt(v)>=3;}).length;
+    const taskVals=dates.map(d=>(db[d]||{}).taskInit).filter(v=>v!=null).map(Number);
+    const avgTask=taskVals.length?avg(taskVals).toFixed(1):'—';
+    html+=card('Avg Focus',avgFocus,'/4','small-warm')+card('Paralysis',paralDays,'days','amber-card')+card('High Stim.',stimDays,'days','amber-card')+card('Avg Task Init',avgTask,'/4','small-warm');
+  }
+  wrap.innerHTML=html;
+}
+function card(label,value,unit,cls){
+  return `<div class="card ${cls}"><div class="card-label">${label}</div><div class="card-value">${value} <span style="font-size:13px;font-weight:600;opacity:.7;">${unit}</span></div></div>`;
+}
+
+function renderGeneralCharts(){
+  const dates=getDates(insightDays);const labels=dates.map(d=>fmtShort(d));
+  document.getElementById('mood-chart-title').textContent=`Mood trends — last ${insightDays} days`;
+  document.getElementById('sleep-chart-title').textContent=`Sleep hours — last ${insightDays} days`;
+  document.getElementById('habits-chart-title').textContent=`Lifestyle habits — last ${insightDays} days`;
+  destroyChart('mood');destroyChart('sleep');destroyChart('habits');destroyChart('corr-sleep-mood');
+  const moodCtx=document.getElementById('chart-mood').getContext('2d');
+  chartInstances.mood=new Chart(moodCtx,{type:'line',data:{labels,datasets:[
+    {label:'Depression',data:dates.map(d=>+(db[d]||{}).depressedMood||null),borderColor:chartColors.red,backgroundColor:'rgba(220,38,38,.08)',tension:.3,fill:true,spanGaps:true,pointRadius:3},
+    {label:'Irritability',data:dates.map(d=>+(db[d]||{}).irritability||null),borderColor:chartColors.amber,backgroundColor:'rgba(180,83,9,.08)',tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Anxiety',data:dates.map(d=>+(db[d]||{}).anxiety||null),borderColor:chartColors.brown,fill:false,tension:.3,spanGaps:true,pointRadius:3},
+    {label:'Outlook',data:dates.map(d=>+(db[d]||{}).overallOutlook||null),borderColor:chartColors.pri,fill:false,tension:.3,spanGaps:true,pointRadius:3},
+  ]},options:baseOpts(1,4)});
+  // Sleep as LINE chart
+  const sleepCtx=document.getElementById('chart-sleep').getContext('2d');
+  chartInstances.sleep=new Chart(sleepCtx,{type:'line',data:{labels,datasets:[
+    {label:'Sleep (hrs)',data:dates.map(d=>(db[d]||{}).sleepHours||null),borderColor:chartColors.indigo,backgroundColor:'rgba(91,95,199,.1)',tension:.3,fill:true,spanGaps:false,pointRadius:3}
+  ]},options:{...baseOpts(0,14),scales:{...baseOpts(0,14).scales,y:{...baseOpts(0,14).scales.y,suggestedMax:12,ticks:{...baseOpts(0,14).scales.y.ticks,stepSize:1}}}}});
+  const habFields=[{f:'exercise',l:'Exercise'},{f:'meditation',l:'Meditation'},{f:'outsideTime',l:'Outside'},{f:'talkTherapy',l:'Therapy'},{f:'socialTime',l:'Social'},{f:'hygiene',l:'Hygiene'},{f:'chores',l:'Chores'}];
+  const habCtx=document.getElementById('chart-habits').getContext('2d');
+  chartInstances.habits=new Chart(habCtx,{type:'bar',data:{labels:habFields.map(h=>h.l),datasets:[{label:`Days (last ${insightDays})`,data:habFields.map(h=>dates.filter(d=>(db[d]||{})[h.f]).length),backgroundColor:chartColors.pri,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{min:0,max:insightDays,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}},y:{ticks:{color:'#3a5c42',font:{size:11,weight:'600'}},grid:{display:false}}}}});
+  // Correlation: sleep vs mood
+  const corrTitle=document.getElementById('corr-chart-title');
+  if(corrTitle)corrTitle.textContent=`Correlation of Sleep vs Mood — last ${insightDays} days`;
+  const corrCtx=document.getElementById('chart-corr-sleep-mood').getContext('2d');
+  const corrData=dates.filter(d=>(db[d]||{}).sleepHours&&(db[d]||{}).depressedMood).map(d=>({x:(db[d]||{}).sleepHours,y:+(db[d]||{}).depressedMood}));
+  destroyChart('corr-sleep-mood');
+  chartInstances['corr-sleep-mood']=new Chart(corrCtx,{type:'scatter',data:{datasets:[{label:'Sleep vs Depression',data:corrData,backgroundColor:chartColors.amber,pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`Sleep: ${ctx.raw.x}h → Depression: ${ctx.raw.y}`}}},scales:{x:{title:{display:true,text:'Sleep (hrs)',color:'#7a9c82'},min:0,max:14,ticks:{color:'#7a9c82',font:{size:10},stepSize:2},grid:{color:'#f0f7f2'}},y:{title:{display:true,text:'Depression (1-4)',color:'#7a9c82'},min:1,max:4,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}}}}});
+}
+
+function renderCPTSDCharts(){
+  const dates=getDates(insightDays);const labels=dates.map(d=>fmtShort(d));
+  document.getElementById('cptsd-sx-title').textContent=`CPTSD symptoms — last ${insightDays} days`;
+  document.getElementById('trauma-freq-title').textContent=`Trauma responses frequency — last ${insightDays} days`;
+  document.getElementById('cptsd-corr-title').innerText = `Correlation of Felt Safe vs Dysregulation — last ${insightDays} days`;
+  destroyChart('cptsd-sx');destroyChart('trauma');destroyChart('corr-safe-dysreg');
+  const sxCtx=document.getElementById('chart-cptsd-sx').getContext('2d');
+  chartInstances['cptsd-sx']=new Chart(sxCtx,{type:'line',data:{labels,datasets:[
+    {label:'Dysregulation',data:dates.map(d=>+(db[d]||{}).emotDysreg||null),borderColor:chartColors.teal,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Flashbacks',data:dates.map(d=>+(db[d]||{}).flashbacks ? 4 : null),borderColor:chartColors.rose||'#be185d',tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Body Tension',data:dates.map(d=>+(db[d]||{}).bodyTension||null),borderColor:chartColors.amber,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Felt Safe',data:dates.map(d=>+(db[d]||{}).feltSafe||null),borderColor:chartColors.green,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+  ]},options:baseOpts(1,4)});
+  const traumaFields=[{f:'flashbacks',l:'Flashbacks'},{f:'nightmares',l:'Nightmares'},{f:'dissociation',l:'Dissociation'},{f:'triggered',l:'Triggered'},{f:'panicAttacks',l:'Panic attacks'},{f:'cognitiveFog',l:'Cog. fog'},{f:'selfDestructive',l:'Self-destruct.'}];
+  const trCtx=document.getElementById('chart-trauma').getContext('2d');
+  chartInstances.trauma=new Chart(trCtx,{type:'bar',data:{labels:traumaFields.map(h=>h.l),datasets:[{label:`Days triggered (last ${insightDays})`,data:traumaFields.map(h=>dates.filter(d=>(db[d]||{})[h.f]).length),backgroundColor:chartColors.teal,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{min:0,max:insightDays,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}},y:{ticks:{color:chartColors.teal,font:{size:11,weight:'600'}},grid:{display:false}}}}});
+  // Correlation: felt safe vs dysregulation
+  const corrCtx=document.getElementById('chart-corr-safe-dysreg').getContext('2d');
+  const corrData=dates.filter(d=>(db[d]||{}).feltSafe&&(db[d]||{}).emotDysreg).map(d=>({x:+(db[d]||{}).feltSafe,y:+(db[d]||{}).emotDysreg}));
+  chartInstances['corr-safe-dysreg']=new Chart(corrCtx,{type:'scatter',data:{datasets:[{label:'Felt Safe vs Dysregulation',data:corrData,backgroundColor:chartColors.teal,pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`Safe: ${ctx.raw.x} → Dysreg: ${ctx.raw.y}`}}},scales:{x:{title:{display:true,text:'Felt Safe (1-4)',color:'#7a9c82'},min:1,max:4,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}},y:{title:{display:true,text:'Dysregulation (1-4)',color:'#7a9c82'},min:1,max:4,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}}}}});
+}
+
+function renderADHDCharts(){
+  const dates=getDates(insightDays);const labels=dates.map(d=>fmtShort(d));
+  document.getElementById('exec-chart-title').textContent=`Executive function — last ${insightDays} days`;
+  document.getElementById('sensory-chart-title').textContent=`Sensory overload frequency — last ${insightDays} days`;
+  document.getElementById('adhd-corr-title').innerText = `Correlation of Sleep vs Focus — last ${insightDays} days`;
+  destroyChart('exec');destroyChart('sensory');destroyChart('corr-sleep-focus');
+  const execCtx=document.getElementById('chart-exec').getContext('2d');
+  chartInstances.exec=new Chart(execCtx,{type:'line',data:{labels,datasets:[
+    {label:'Focus',data:dates.map(d=>+(db[d]||{}).focus||null),borderColor:chartColors.indigo,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Task Init',data:dates.map(d=>+(db[d]||{}).taskInit||null),borderColor:chartColors.green,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Working Mem.',data:dates.map(d=>+(db[d]||{}).workingMemory||null),borderColor:chartColors.amber,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+    {label:'Distractib.',data:dates.map(d=>+(db[d]||{}).distractibility||null),borderColor:chartColors.red,tension:.3,fill:false,spanGaps:true,pointRadius:3},
+  ]},options:baseOpts(1,4)});
+  const sensChans=[{f:'auditory',l:'Auditory'},{f:'visual',l:'Visual'},{f:'tactile',l:'Touch'},{f:'textures',l:'Textures'},{f:'olfactory',l:'Smell'},{f:'proprioceptive',l:'Proprioceptive'}];
+  const senCtx=document.getElementById('chart-sensory').getContext('2d');
+  chartInstances.sensory=new Chart(senCtx,{type:'bar',data:{labels:sensChans.map(s=>s.l),datasets:[{label:`Days triggered (last ${insightDays})`,data:sensChans.map(s=>dates.filter(d=>{const v=(db[d]||{}).sensoryCh||'';return v.includes(s.f);}).length),backgroundColor:chartColors.indigo,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{min:0,max:insightDays,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}},y:{ticks:{color:chartColors.indigo,font:{size:11,weight:'600'}},grid:{display:false}}}}});
+  // Correlation: sleep vs focus
+  const corrCtx=document.getElementById('chart-corr-sleep-focus').getContext('2d');
+  const corrData=dates.filter(d=>(db[d]||{}).sleepHours&&(db[d]||{}).focus).map(d=>({x:(db[d]||{}).sleepHours,y:+(db[d]||{}).focus}));
+  chartInstances['corr-sleep-focus']=new Chart(corrCtx,{type:'scatter',data:{datasets:[{label:'Sleep vs Focus',data:corrData,backgroundColor:chartColors.indigo,pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>`Sleep: ${ctx.raw.x}h → Focus: ${ctx.raw.y}`}}},scales:{x:{title:{display:true,text:'Sleep (hrs)',color:'#7a9c82'},min:0,max:14,ticks:{color:'#7a9c82',font:{size:10},stepSize:2},grid:{color:'#f0f7f2'}},y:{title:{display:true,text:'Focus (1-4)',color:'#7a9c82'},min:1,max:4,ticks:{color:'#7a9c82',font:{size:10}},grid:{color:'#f0f7f2'}}}}});
+}
+
+// ═══ EXPORT / IMPORT ═══
+function openExportModal(){document.getElementById('export-modal').style.display='flex';}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({mindflow_v1:db,mindflow_meds:medications,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`moodflow-backup-${todayStr()}.json`;a.click();
+  document.getElementById('export-modal').style.display='none';flash('Backup exported ✓');
+}
+function exportCSV(mode){
+  const dates=Object.keys(db).filter(k=>!k.startsWith('_')).sort();
+  const allG=['sleepHours','restfulSleep','insomnia','sleepQuality','depressedMood','elevatedMood','irritability','anxiety','overallOutlook','loneliness','productivity','motivation','chores','hygiene','nutrition','appetite','outsideTime','exercise','socialTime','meditation','physicalPain','alcohol','caffeine','talkTherapy','socialMedia','newsMedia','weight','menstruation','generalNotes'];
+  const allC=['feltSafe','hypervigilance','nsState','flashbacks','dissociation','cognitiveFog','triggered','nightmares','cptsdInsomnia','panicAttacks','selfDestructive','emotDysreg','shame','isolationUrge','racingThoughts','bodyTension','somaticSx','copingUsed','cptsdTrigger'];
+  const allA=['focus','distractibility','brainFog','hyperactivity','hyperfocus','adhdParalysis','adhdEmotDysreg','taskInit','taskCompletion','timeBlindness','workingMemory','rsd','verbalExpr','overstimulation','sensoryCh','adhdSx','adhdStrategies','adhdSleepRacing','adhdNotes'];
+  let fields=mode==='general'?allG:mode==='cptsd'?allC:mode==='adhd'?allA:[...allG,...allC,...allA];
+  medications.forEach(m=>fields.push('med_'+m.id));
+  const hdr={sleepHours:'Sleep (hrs)',restfulSleep:'Restful Sleep',insomnia:'Insomnia',sleepQuality:'Sleep Quality',depressedMood:'Depressed Mood',elevatedMood:'Elevated Mood',irritability:'Irritability',anxiety:'Anxiety',overallOutlook:'Overall Outlook',loneliness:'Loneliness',productivity:'Productivity',motivation:'Motivation',chores:'Chores',hygiene:'Hygiene',nutrition:'Nutrition',appetite:'Appetite',outsideTime:'Outside Time',exercise:'Exercise',socialTime:'Social Time',meditation:'Meditation',physicalPain:'Physical Pain',alcohol:'Alcohol',caffeine:'Caffeine',talkTherapy:'Talk Therapy',socialMedia:'Social Media',newsMedia:'News Media',weight:'Weight (kg)',menstruation:'Menstruation',generalNotes:'Notes',feltSafe:'Felt Safe',hypervigilance:'Hypervigilance',nsState:'NS State',flashbacks:'Flashbacks',dissociation:'Dissociation',cognitiveFog:'Cognitive Fog',triggered:'Triggered',nightmares:'Nightmares',cptsdInsomnia:'Insomnia (CPTSD)',panicAttacks:'Panic Attacks',selfDestructive:'Self-Destructiveness',emotDysreg:'Emot. Dysregulation',shame:'Shame',isolationUrge:'Isolation Urge',racingThoughts:'Racing Thoughts',bodyTension:'Body Tension',somaticSx:'Somatic Symptoms',copingUsed:'Coping Used',cptsdTrigger:'Trigger Notes',focus:'Focus',distractibility:'Distractibility',brainFog:'Brain Fog',hyperactivity:'Hyperactivity',hyperfocus:'Hyperfocus',adhdParalysis:'ADHD Paralysis',adhdEmotDysreg:'Emot. Dysreg (ADHD)',taskInit:'Task Initiation',taskCompletion:'Task Completion',timeBlindness:'Time Blindness',workingMemory:'Working Memory',rsd:'RSD',verbalExpr:'Verbal Expression',overstimulation:'Overstimulation',sensoryCh:'Sensory Channels',adhdSx:'ADHD Symptoms',adhdStrategies:'Strategies',adhdSleepRacing:'Racing Mind (Sleep)',adhdNotes:'ADHD Notes'};
+  medications.forEach(m=>{hdr['med_'+m.id]=`Med: ${m.name} (${m.dose})`;});
+  const csv=[['Date',...fields.map(f=>hdr[f]||f)].join(','),...dates.map(d=>{const r=db[d]||{};return[d,...fields.map(f=>`"${String(r[f]??'').replace(/"/g,'""')}"`).join(',')].join(',');})].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`moodflow-${mode}-${todayStr()}.csv`;a.click();
+  document.getElementById('export-modal').style.display='none';flash('CSV exported ✓');
+}
+function triggerImport(){document.getElementById('import-file-input').click();}
+function importJSON(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      showConfirm('Import backup?','This will replace your current data.',()=>{
+        if(data.mindflow_v1)db=data.mindflow_v1;
+        if(data.mindflow_meds)medications=data.mindflow_meds;
+        save();localStorage.setItem('mindflow_meds',JSON.stringify(medications));
+        document.getElementById('export-modal').style.display='none';
+        loadDay();renderMedList();flash('Backup imported ✓');
+      },'Import','var(--pri)');
+    }catch(err){alert('Could not read file. Make sure it\'s a valid MoodFlow backup.');}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ═══ CONFIRM ═══
+function showConfirm(title,msg,cb,okLabel='Confirm',okColor='var(--red)',cancelLabel='Cancel'){
+  confirmCallback=cb;
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-ok-btn').textContent=okLabel;
+  document.getElementById('confirm-ok-btn').style.background=okColor;
+  document.getElementById('confirm-ok-btn').style.borderColor=okColor;
+  document.getElementById('confirm-no-btn').textContent=cancelLabel;
+  document.getElementById('confirm-dialog').style.display='flex';
+}
+function confirmResolve(yes){
+  document.getElementById('confirm-dialog').style.display='none';
+  if(yes&&confirmCallback)confirmCallback();
+  confirmCallback=null;
+}
+
+// ═══ FLASH ═══
+function flash(msg){const el=document.getElementById('flash');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
 </script>
-
 </body>
 </html>
