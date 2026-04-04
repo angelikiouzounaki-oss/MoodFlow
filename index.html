@@ -210,8 +210,7 @@ button{-webkit-appearance:none!important;appearance:none!important;font-family:i
 /* CHART INFO TOOLTIP */
 .chart-title-row{display:flex!important;align-items:center!important;gap:6px!important;}
 .chart-info-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:17px!important;height:17px!important;border-radius:50%!important;background:var(--border)!important;border:none!important;color:var(--text2)!important;font-size:10px!important;font-weight:800!important;cursor:pointer!important;position:relative!important;flex-shrink:0!important;line-height:1!important;}
-.chart-tip{display:none!important;position:absolute!important;bottom:calc(100% + 8px)!important;left:50%!important;transform:translateX(-50%)!important;background:var(--text)!important;color:#fff!important;font-size:11px!important;font-weight:400!important;line-height:1.5!important;padding:9px 12px!important;border-radius:10px!important;width:230px!important;z-index:500!important;text-align:left!important;text-transform:none!important;letter-spacing:0!important;pointer-events:none!important;}
-.chart-tip::after{content:''!important;position:absolute!important;top:100%!important;left:50%!important;transform:translateX(-50%)!important;border:6px solid transparent!important;border-top-color:var(--text)!important;}
+.chart-tip{display:none!important;position:fixed!important;background:var(--text)!important;color:#fff!important;font-size:11px!important;font-weight:400!important;line-height:1.5!important;padding:9px 12px!important;border-radius:10px!important;width:230px!important;z-index:500!important;text-align:left!important;text-transform:none!important;letter-spacing:0!important;pointer-events:none!important;}
 .chart-info-btn.open .chart-tip{display:block!important;}
 
 /* FLASH */
@@ -1613,7 +1612,27 @@ function injectChartTooltips(){
       e.stopPropagation();
       const wasOpen=btn.classList.contains('open');
       document.querySelectorAll('.chart-info-btn.open').forEach(b=>b.classList.remove('open'));
-      if(!wasOpen)btn.classList.add('open');
+      if(!wasOpen){
+        btn.classList.add('open');
+        // Position tooltip to stay within viewport
+        const tipEl=btn.querySelector('.chart-tip');
+        const rect=btn.getBoundingClientRect();
+        const tipW=230;
+        const margin=10;
+        const viewW=window.innerWidth;
+        // vertical: above the button
+        const top=rect.top-8;
+        tipEl.style.top=(top-tipEl.offsetHeight||top-80)+'px';
+        // horizontal: centre on button, but clamp to screen edges
+        let left=rect.left+rect.width/2-tipW/2;
+        left=Math.max(margin,Math.min(left,viewW-tipW-margin));
+        tipEl.style.left=left+'px';
+        // re-measure after display and fix vertical
+        requestAnimationFrame(()=>{
+          const h=tipEl.offsetHeight;
+          tipEl.style.top=(rect.top-h-8)+'px';
+        });
+      }
     };
     el.appendChild(btn);
   });
